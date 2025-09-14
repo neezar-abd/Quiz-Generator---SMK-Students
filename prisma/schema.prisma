@@ -1,0 +1,108 @@
+// Prisma schema for SMK AI Quiz Generator
+// Supports Supabase Postgres with comprehensive quiz management
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - represents users creating quizzes
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  quizzes Quiz[]
+
+  @@map("users")
+}
+
+// Quiz model - main quiz entity
+model Quiz {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  topic       String
+  level       QuizLevel
+  status      QuizStatus  @default(DRAFT)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Foreign keys
+  userId      String
+  
+  // Relations
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  multipleChoice  QuestionMCQ[]
+  essays          QuestionEssay[]
+
+  @@map("quizzes")
+  @@index([userId])
+  @@index([topic])
+  @@index([level])
+  @@index([status])
+}
+
+// Multiple Choice Question model
+model QuestionMCQ {
+  id          String   @id @default(cuid())
+  question    String
+  optionA     String
+  optionB     String
+  optionC     String
+  optionD     String
+  answerIndex Int      // 0-3 for A-D
+  explanation String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign keys
+  quizId      String
+
+  // Relations
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("question_mcqs")
+  @@index([quizId])
+}
+
+// Essay Question model
+model QuestionEssay {
+  id          String   @id @default(cuid())
+  question    String
+  rubric      String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Foreign keys
+  quizId      String
+
+  // Relations
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("question_essays")
+  @@index([quizId])
+}
+
+// Enums for type safety
+enum QuizLevel {
+  X
+  XI
+  XII
+  GENERAL
+}
+
+enum QuizStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}

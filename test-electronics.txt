@@ -1,0 +1,26 @@
+Introduction to Basic Electronics
+
+Electronics is a fundamental subject in SMK (Vocational High School) programs. This document covers essential concepts that students need to understand.
+
+Chapter 1: Basic Components
+Electronic circuits are built using various components such as resistors, capacitors, and inductors. Each component has specific properties and functions.
+
+Resistors control the flow of electric current in a circuit. They are measured in ohms and follow Ohm's law, which states that voltage equals current multiplied by resistance (V = I × R).
+
+Capacitors store electrical energy in an electric field. They are used for filtering, timing circuits, and energy storage applications.
+
+Inductors store energy in a magnetic field when current flows through them. They are commonly used in power supplies and filtering applications.
+
+Chapter 2: Basic Laws
+Kirchhoff's Current Law (KCL) states that the sum of currents entering a node equals the sum of currents leaving the node.
+
+Kirchhoff's Voltage Law (KVL) states that the sum of voltages around any closed loop in a circuit equals zero.
+
+These laws are fundamental to circuit analysis and are essential for understanding complex electronic systems.
+
+Chapter 3: Practical Applications
+Electronic circuits are found in many everyday devices including smartphones, computers, and household appliances. Understanding basic electronics helps in troubleshooting and maintenance of these devices.
+
+Safety is paramount when working with electronics. Always follow proper safety procedures and use appropriate protective equipment.
+
+This concludes the introduction to basic electronics for SMK students.
