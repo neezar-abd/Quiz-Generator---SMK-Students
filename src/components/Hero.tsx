@@ -5,7 +5,7 @@ import { BadgeCheck, Cpu, Zap } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center pt-16">
+    <section className="relative min-h-[92vh] flex items-center justify-center pt-28 sm:pt-32 lg:pt-16">
       {/* Ambient orbs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-black/5 blur-3xl" />
