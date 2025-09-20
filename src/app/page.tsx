@@ -14,10 +14,17 @@ export default function Home() {
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: 'Soalin AI',
-            url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+            url:
+              process.env.NEXT_PUBLIC_SITE_URL ||
+              process.env.NEXT_PUBLIC_APP_URL ||
+              'http://localhost:3000',
             potentialAction: {
               '@type': 'SearchAction',
-              target: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/search?q={search_term_string}`,
+              target: `${
+                process.env.NEXT_PUBLIC_SITE_URL ||
+                process.env.NEXT_PUBLIC_APP_URL ||
+                'http://localhost:3000'
+              }/search?q={search_term_string}`,
               'query-input': 'required name=search_term_string',
             },
           }),
@@ -34,7 +41,10 @@ export default function Home() {
             name: 'Soalin AI',
             applicationCategory: 'EducationalApplication',
             operatingSystem: 'Web',
-            url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+            url:
+              process.env.NEXT_PUBLIC_SITE_URL ||
+              process.env.NEXT_PUBLIC_APP_URL ||
+              'http://localhost:3000',
             offers: {
               '@type': 'Offer',
               price: '0',
