@@ -1,44 +1,29 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Performance optimizations
-  experimental: {
-    optimizePackageImports: ['react', 'react-dom'],
-  },
-  
-  // Bundle analyzer for production builds
-  webpack: (config, { isServer }) => {
-    // Optimize bundle splitting
-    if (!isServer) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          ...config.optimization.splitChunks,
-          cacheGroups: {
-            ...config.optimization.splitChunks?.cacheGroups,
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-            },
-          },
-        },
-      };
-    }
-    return config;
-  },
+  // Performance optimizations (disabled due to build instability on Windows)
+  // experimental: {
+  //   optimizePackageImports: ['react', 'react-dom'],
+  // },
 
   // Image optimization
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
   },
 
   // Compression
   compress: true,
 
-  // Static optimization
-  output: 'standalone',
+  // Static optimization (standalone disabled due to Windows nft trace issues)
+  // output: 'standalone',
   
   // ESLint during build
   eslint: {

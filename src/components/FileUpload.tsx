@@ -126,7 +126,7 @@ export default function FileUpload({
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      handleFileSelect(files[0]); // Only handle first file
+      handleFileSelect(files[0]!); // Only handle first file
     }
   }, [disabled, handleFileSelect]);
 
@@ -136,7 +136,7 @@ export default function FileUpload({
     
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      handleFileSelect(files[0]);
+      handleFileSelect(files[0]!);
     }
   }, [disabled, handleFileSelect]);
 
@@ -150,11 +150,11 @@ export default function FileUpload({
   const getFileIcon = (fileName: string): string => {
     const extension = fileName.toLowerCase().split('.').pop();
     switch (extension) {
-      case 'pdf': return '📄';
+      case 'pdf': return 'PDF';
       case 'doc':
-      case 'docx': return '📝';
-      case 'txt': return '📋';
-      default: return '📁';
+      case 'docx': return 'DOC';
+      case 'txt': return 'TXT';
+      default: return 'FILE';
     }
   };
 
@@ -202,7 +202,7 @@ export default function FileUpload({
             {/* Validation warnings */}
             {validationResult?.warnings && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-left">
-                <p className="text-yellow-800 font-medium text-sm">⚠️ Warnings:</p>
+                <p className="text-yellow-800 font-medium text-sm">Warnings:</p>
                 <ul className="text-yellow-700 text-xs mt-1 space-y-1">
                   {validationResult.warnings.map((warning, index) => (
                     <li key={index}>• {warning}</li>
@@ -226,7 +226,7 @@ export default function FileUpload({
           // Empty state
           <div className="space-y-4">
             <div className="w-16 h-16 bg-black/10 mx-auto rounded-lg flex items-center justify-center">
-              <span className="text-2xl">📁</span>
+              <span className="text-2xl">FILE</span>
             </div>
             <div>
               <p className="text-lg font-medium text-black">
@@ -295,26 +295,26 @@ export function useFileValidation() {
 export function FileTypeInfo({ className = '' }: { className?: string }) {
   return (
     <div className={`bg-black/5 rounded-lg p-4 ${className}`}>
-      <h4 className="font-medium text-black mb-3">📋 Supported File Types</h4>
+      <h4 className="font-medium text-black mb-3">Supported File Types</h4>
       <div className="space-y-2 text-sm">
         <div className="flex items-center gap-2">
-          <span>📄</span>
+          <span>PDF</span>
           <span className="font-medium">PDF</span>
           <span className="text-black/60">- Portable Document Format</span>
         </div>
         <div className="flex items-center gap-2">
-          <span>📝</span>
+          <span>DOC</span>
           <span className="font-medium">DOCX/DOC</span>
           <span className="text-black/60">- Microsoft Word documents</span>
         </div>
         <div className="flex items-center gap-2">
-          <span>📋</span>
+          <span>TXT</span>
           <span className="font-medium">TXT</span>
           <span className="text-black/60">- Plain text files</span>
         </div>
       </div>
       <p className="text-xs text-black/50 mt-3 border-t border-black/10 pt-2">
-        💡 Tip: Ensure your files contain readable text content for best quiz generation results.
+        Tip: Ensure your files contain readable text content for best quiz generation results.
       </p>
     </div>
   );

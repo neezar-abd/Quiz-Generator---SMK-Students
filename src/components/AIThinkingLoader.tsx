@@ -71,7 +71,7 @@ const AIThinkingLoader = memo(function AIThinkingLoader() {
 
       {/* Fun Facts Carousel */}
       <div className="text-center text-sm text-gray-500 animate-fade-in-out">
-        <p className="font-medium">💡 Did you know?</p>
+  <p className="font-medium">Did you know?</p>
         <p>AI can process your content 1000x faster than humans!</p>
       </div>
     </div>

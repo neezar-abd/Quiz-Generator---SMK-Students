@@ -7,7 +7,7 @@ interface CardProps {
 
 const Card = memo<CardProps>(function Card({ children, className = '' }) {
   return (
-    <div className={`bg-white border border-black/10 rounded-xl shadow-sm ${className}`}>
+    <div className={`bg-white border border-black/10 rounded-xl shadow-sm transition-shadow duration-300 hover:shadow-md ${className}`}>
       {children}
     </div>
   );

@@ -1,16 +1,16 @@
 # Supabase Connection Testing Guide
 
-## 🔍 How to Check if Supabase is Connected
+## How to Check if Supabase is Connected
 
 ### Method 1: Visual UI Test (Recommended) 
 **Visit: `http://localhost:3000/test-connection`**
 
 This provides a comprehensive visual interface to:
-- ✅ Test database connection
-- ✅ Verify table structure  
-- ✅ Check environment variables
-- ✅ Display database statistics
-- ✅ Show troubleshooting tips if errors occur
+- Test database connection
+- Verify table structure  
+- Check environment variables
+- Display database statistics
+- Show troubleshooting tips if errors occur
 
 ### Method 2: API Endpoint Test
 **Make a request to: `GET /api/test-connection`**
@@ -27,7 +27,7 @@ http://localhost:3000/api/test-connection
 ```json
 {
   "success": true,
-  "message": "✅ Supabase connection successful!",
+  "message": "Supabase connection successful!",
   "tests": {
     "connection": {
       "success": true,
@@ -62,24 +62,24 @@ npm run db:test
 
 **Expected Output (Success):**
 ```
-🔍 Testing Supabase Connection...
+Testing Supabase Connection...
 
-📋 Environment Check:
+Environment Check:
 - NODE_ENV: development
 - DATABASE_URL exists: true
 - DATABASE_URL format valid: true
 - DATABASE_URL preview: postgresql://postgres...
 
 🔌 Testing Database Connection...
-✅ Basic connection successful
-✅ Table check completed
-📊 Tables found: 4
+Basic connection successful
+Table check completed
+Tables found: 4
 Tables: User, Quiz, QuestionMCQ, QuestionEssay
-📈 Record counts:
+Record counts:
 - Users: 1
 - Quizzes: 0
 
-🎉 Supabase connection test PASSED!
+Supabase connection test PASSED!
 Your database is ready for the AI Quiz Generator.
 ```
 
@@ -99,8 +99,8 @@ npx prisma studio
 
 ### 1. No DATABASE_URL
 ```
-❌ DATABASE_URL not found in environment variables
-💡 Make sure to create .env.local with your Supabase DATABASE_URL
+DATABASE_URL not found in environment variables
+Tip: Make sure to create .env.local with your Supabase DATABASE_URL
 ```
 
 **Solution:**
@@ -109,8 +109,8 @@ npx prisma studio
 
 ### 2. Invalid DATABASE_URL Format
 ```
-❌ Invalid DATABASE_URL format
-💡 Should start with postgresql:// or postgres://
+Invalid DATABASE_URL format
+Tip: Should start with postgresql:// or postgres://
 ```
 
 **Solution:**
@@ -119,7 +119,7 @@ npx prisma studio
 
 ### 3. Tables Don't Exist
 ```
-⚠️ No quiz tables found. You may need to run the SQL setup script.
+Warning: No quiz tables found. You may need to run the SQL setup script.
 ```
 
 **Solution:**
@@ -129,7 +129,7 @@ npx prisma studio
 
 ### 4. Connection Refused
 ```
-❌ Database connection FAILED
+Database connection FAILED
 Error: connect ECONNREFUSED
 ```
 
@@ -141,7 +141,7 @@ Error: connect ECONNREFUSED
 
 ### 5. Authentication Failed  
 ```
-❌ password authentication failed for user "postgres"
+password authentication failed for user "postgres"
 ```
 
 **Solution:**
@@ -149,7 +149,7 @@ Error: connect ECONNREFUSED
 2. Reset database password in Supabase dashboard
 3. Update .env.local with new credentials
 
-## 🔧 Troubleshooting Steps
+## Troubleshooting Steps
 
 ### Step 1: Check Environment
 ```bash
@@ -192,25 +192,25 @@ npx prisma studio
 
 ## 📊 What Success Looks Like
 
-### ✅ Fully Connected & Ready:
+### Fully Connected & Ready:
 - DATABASE_URL exists and valid format
 - Basic connection works
 - All 4 tables exist (User, Quiz, QuestionMCQ, QuestionEssay)
 - Can perform CRUD operations
 - Sample data loads successfully
 
-### ⚠️ Partially Connected:
+### Partially Connected:
 - Connection works but tables missing
 - Tables exist but no sample data
 - Operations work but slow response
 
-### ❌ Not Connected:
+### Not Connected:
 - No DATABASE_URL or invalid format
 - Connection refused/timeout
 - Authentication errors
 - Missing tables entirely
 
-## 🎯 Quick Commands Reference
+## Quick Commands Reference
 
 ```bash
 # Test connection
@@ -232,11 +232,11 @@ npm run prisma:push
 curl http://localhost:3000/api/test-connection
 ```
 
-## 🚀 Next Steps After Successful Connection
+## Next Steps After Successful Connection
 
-1. **✅ Connection Confirmed** → Continue with quiz testing
-2. **✅ Tables Ready** → Test quiz generation on `/upload`
-3. **✅ Sample Data** → Check dashboard at `/dashboard`
-4. **✅ Full CRUD** → Test creating, editing, deleting quizzes
+1. Connection Confirmed → Continue with quiz testing
+2. Tables Ready → Test quiz generation on `/upload`
+3. Sample Data → Check dashboard at `/dashboard`
+4. Full CRUD → Test creating, editing, deleting quizzes
 
-Your Supabase is now ready for the AI Quiz Generator! 🎉
+Your Supabase is now ready for the AI Quiz Generator!

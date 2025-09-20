@@ -6,12 +6,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
-import { QuizPayloadSchema, ensureQuizPayload, ensureQuizPayloadForCreate } from '@/lib/quizSchema';
+import { ensureQuizPayloadForCreate } from '@/lib/quizSchema';
 import { 
   mapQuizPayloadToDatabase, 
   createQuizWithQuestions,
   mapDatabaseToQuizPayload 
 } from '@/server/quizMapper';
+import { requireAuth, createUnauthorizedResponse } from '@/lib/auth-helpers';
 
 /**
  * POST /api/quizzes - Create new quiz
@@ -19,15 +20,20 @@ import {
  */
 export async function POST(request: NextRequest) {
   try {
+    // 🔐 Require authentication
+    const authResult = await requireAuth();
+    if (!authResult) {
+      return createUnauthorizedResponse();
+    }
+    const { userId } = authResult;
+
   const body = await request.json();
 
-  // NOTE: Client may include userId and UI-only keys (like _metadata).
-    // Our QuizPayload schema is strict and rejects unknown fields.
-  // Strip them before validation to avoid false negatives.
-  const { userId: rawUserId, _metadata: _ignored, ...rawQuiz } = body ?? {};
+  // Strip UI-only keys before validation
+  const rawQuiz = (body ?? {}) as Record<string, unknown>;
 
     // Validate request body (creation allows missing id)
-    let quizPayload;
+  let quizPayload;
     try {
       quizPayload = ensureQuizPayloadForCreate(rawQuiz);
     } catch (validationError) {
@@ -41,8 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For now, use a default user ID (in production, get from auth)
-    const userId = rawUserId || 'default-user';
+    // Use authenticated user ID
 
     // Map to database format
     const quizData = mapQuizPayloadToDatabase(quizPayload, userId);
@@ -89,6 +94,13 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
+    // 🔐 Require authentication
+    const authResult = await requireAuth();
+    if (!authResult) {
+      return createUnauthorizedResponse();
+    }
+    const { userId } = authResult;
+
     const { searchParams } = new URL(request.url);
     
     // Extract query parameters
@@ -97,10 +109,10 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') as 'DRAFT' | 'PUBLISHED' | 'ARCHIVED' | null;
     const limit = parseInt(searchParams.get('limit') || '10');
     const offset = parseInt(searchParams.get('offset') || '0');
-    const userId = searchParams.get('userId') || 'default-user';
+    // Use authenticated userId (remove query param option)
 
     // Build where clause
-    const where: any = { userId };
+  const where: Record<string, unknown> = { userId };
     
     if (topic) {
       where.topic = { contains: topic, mode: 'insensitive' };
@@ -120,20 +132,6 @@ export async function GET(request: NextRequest) {
     const [quizzes, totalCount] = await Promise.all([
       prisma.quiz.findMany({
         where,
-        include: {
-          multipleChoice: {
-            orderBy: { order: 'asc' }
-          },
-          essays: {
-            orderBy: { order: 'asc' }
-          },
-          _count: {
-            select: {
-              multipleChoice: true,
-              essays: true
-            }
-          }
-        },
         orderBy: { createdAt: 'desc' },
         take: Math.min(limit, 100), // Max 100 items
         skip: offset,
@@ -143,19 +141,7 @@ export async function GET(request: NextRequest) {
 
     // Convert to QuizPayload format
     const formattedQuizzes = await Promise.all(
-      quizzes.map(async (quiz: any) => {
-        const quizPayload = await mapDatabaseToQuizPayload(quiz.id);
-        return {
-          ...quizPayload,
-          _metadata: {
-            questionCounts: {
-              mcq: quiz._count.multipleChoice,
-              essay: quiz._count.essays,
-              total: quiz._count.multipleChoice + quiz._count.essays
-            }
-          }
-        };
-      })
+      quizzes.map(async (quiz) => mapDatabaseToQuizPayload(quiz.id))
     );
 
     return NextResponse.json({

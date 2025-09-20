@@ -1,4 +1,5 @@
 import Section from "@/components/ui/Section";
+import Link from "next/link";
 
 const steps = [
   {
@@ -87,12 +88,17 @@ export default function HowItWorks() {
 
       {/* CTA Section */}
       <div className="text-center mt-16">
-        <div className="inline-flex items-center px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer">
+        <Link
+          href="/upload"
+          prefetch
+          className="inline-flex items-center px-6 py-3 bg-black !text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+          aria-label="Start creating quizzes by uploading your materials"
+        >
           Ready to get started?
-          <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="ml-2 w-5 h-5 !text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
-        </div>
+        </Link>
       </div>
     </Section>
   );

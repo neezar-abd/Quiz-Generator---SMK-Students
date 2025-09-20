@@ -7,13 +7,15 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
-import { ensureQuizPayload, ensureQuizPayloadForCreate } from '@/lib/quizSchema';
+import { ensureQuizPayloadForCreate } from '@/lib/quizSchema';
 import { 
   mapDatabaseToQuizPayload,
   mapQuizPayloadToDatabase,
   updateQuizWithQuestions,
   deleteQuizWithQuestions
 } from '@/server/quizMapper';
+import type { CreateQuizData } from '@/server/quizMapper';
+import { requireAuth, createUnauthorizedResponse } from '@/lib/auth-helpers';
 
 /**
  * GET /api/quizzes/[id] - Get quiz by ID
@@ -23,6 +25,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // 🔐 Check authentication (but allow public access for shared quizzes)
+    const { searchParams } = new URL(request.url);
+    const shareToken = searchParams.get('share');
+    
     const { id: quizId } = await params;
 
     if (!quizId) {
@@ -33,6 +39,32 @@ export async function GET(
         },
         { status: 400 }
       );
+    }
+
+    // If no share token, require authentication
+    if (!shareToken) {
+      const authResult = await requireAuth();
+      if (!authResult) {
+        return createUnauthorizedResponse();
+      }
+      
+      // Check if user owns this quiz
+      const quiz = await prisma.quiz.findFirst({
+        where: { 
+          id: quizId,
+          userId: authResult.userId 
+        }
+      });
+      
+      if (!quiz) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Quiz not found or access denied'
+          },
+          { status: 404 }
+        );
+      }
     }
 
     // Get quiz with questions
@@ -77,7 +109,16 @@ export async function PUT(
   const { id: quizId } = await params;
   const rawBody = await request.json();
   // Strip userId and UI-only keys before schema validation
-  const { userId: _userIdIgnored, _metadata: _ignored, ...body } = rawBody ?? {};
+  const body = (rawBody ?? {}) as Partial<{
+    metadata: Partial<{ level: string; status: string }>;
+    multipleChoice: unknown;
+    essay: unknown;
+    title?: string | null;
+    description?: string | null;
+    topic?: string | null;
+    level?: string | null;
+    status?: string | null;
+  }>;
 
     if (!quizId) {
       return NextResponse.json(
@@ -105,7 +146,7 @@ export async function PUT(
     }
 
     // Validate request body if it's a complete quiz payload
-    let updateData: any = {};
+  let updateData: Partial<CreateQuizData> = {};
 
     if (body.metadata || body.multipleChoice || body.essay) {
       // Full QuizPayload update
@@ -119,8 +160,8 @@ export async function PUT(
             body.metadata.status = body.metadata.status.toLowerCase();
           }
         }
-        const quizPayload = ensureQuizPayloadForCreate(body);
-        updateData = mapQuizPayloadToDatabase(quizPayload as any, existingQuiz.userId);
+  const quizPayload = ensureQuizPayloadForCreate(body);
+  updateData = mapQuizPayloadToDatabase(quizPayload, existingQuiz.userId);
       } catch (validationError) {
         return NextResponse.json(
           {
@@ -133,11 +174,21 @@ export async function PUT(
       }
     } else {
       // Partial update (metadata only)
-      if (body.title !== undefined) updateData.title = body.title;
-      if (body.description !== undefined) updateData.description = body.description;
-      if (body.topic !== undefined) updateData.topic = body.topic;
-      if (body.level !== undefined) updateData.level = (body.level || '').toString().toUpperCase();
-      if (body.status !== undefined) updateData.status = (body.status || '').toString().toUpperCase();
+      if (body.title !== undefined) updateData.title = body.title ?? undefined;
+      if (body.description !== undefined) updateData.description = body.description ?? undefined;
+      if (body.topic !== undefined) updateData.topic = body.topic ?? undefined;
+      if (body.level !== undefined) {
+        const lvl = (body.level || '').toString().toUpperCase();
+        if (lvl === 'X' || lvl === 'XI' || lvl === 'XII' || lvl === 'GENERAL') {
+          updateData.level = lvl;
+        }
+      }
+      if (body.status !== undefined) {
+        const st = (body.status || '').toString().toUpperCase();
+        if (st === 'DRAFT' || st === 'PUBLISHED' || st === 'ARCHIVED') {
+          updateData.status = st;
+        }
+      }
     }
 
     // Update quiz

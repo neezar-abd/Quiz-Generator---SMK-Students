@@ -12,7 +12,7 @@ The `actions` object from `useQuizStore()` was being recreated on every render, 
 // PROBLEMATIC CODE
 useEffect(() => {
   actions.loadQuizzes();
-}, [actions]); // ❌ actions object changes every render
+}, [actions]); // actions object changes every render
 ```
 
 ## Solutions Applied
@@ -24,7 +24,7 @@ useEffect(() => {
   stableActions.loadQuizzes().catch((error) => {
     console.error('Failed to load quizzes:', error);
   });
-}, []); // ✅ Only run once
+}, []); // Only run once
 ```
 
 ### 2. useCallback in Store (Robust Fix)
@@ -32,7 +32,7 @@ useEffect(() => {
 // Added to useQuizStore.tsx
 const loadQuizzes = useCallback(async (): Promise<void> => {
   // ... implementation
-}, []); // ✅ Stable reference
+}, []); // Stable reference
 ```
 
 ### 3. Stable Actions Hook (Best Practice)
@@ -57,23 +57,23 @@ export function useStableQuizActions() {
 // IN DASHBOARD
 export default function Dashboard() {
   const { state } = useQuizStore();
-  const stableActions = useStableQuizActions(); // ✅ Stable references
+  const stableActions = useStableQuizActions(); // Stable references
 
   useEffect(() => {
     stableActions.loadQuizzes().catch(console.error);
-  }, [stableActions.loadQuizzes]); // ✅ Won't cause infinite loops
+  }, [stableActions.loadQuizzes]); // Won't cause infinite loops
 }
 ```
 
 ## Prevention Guidelines
 
-### DO ✅
+### DO
 - Use `useCallback` for functions that are dependencies
 - Use `useMemo` for objects that are dependencies
 - Create stable action hooks for complex stores
 - Use empty dependency arrays when appropriate
 
-### DON'T ❌
+### DON'T
 - Put non-memoized objects/functions in dependency arrays
 - Create new objects/functions inside useEffect
 - Ignore ESLint warnings about missing dependencies
@@ -81,10 +81,10 @@ export default function Dashboard() {
 
 ## Testing
 After applying the fixes:
-- ✅ Dashboard loads without infinite loops
-- ✅ Quiz data loads properly on mount
-- ✅ No console errors or warnings
-- ✅ Performance improved (no unnecessary re-renders)
+- Dashboard loads without infinite loops
+- Quiz data loads properly on mount
+- No console errors or warnings
+- Performance improved (no unnecessary re-renders)
 
 ## Files Modified
 - `src/app/dashboard/page.tsx` - Fixed useEffect dependency

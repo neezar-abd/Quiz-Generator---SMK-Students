@@ -6,7 +6,7 @@
 import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
 
-import { SUPPORTED_EXTENSIONS, SUPPORTED_MIME_TYPES, SupportedFileType } from '@/lib/fileConstants';
+import type { SupportedFileType } from '@/lib/fileConstants';
 
 /**
  * File input interface for extraction
@@ -28,14 +28,14 @@ export async function extractPdf(buffer: Buffer): Promise<string> {
       throw new Error('PDF buffer is empty or invalid');
     }
 
-    console.log(`📄 Extracting text from PDF (${buffer.length} bytes)`);
+  console.log(`Extracting text from PDF (${buffer.length} bytes)`);
     const data = await pdfParse(buffer);
     
     if (!data.text || data.text.trim().length === 0) {
       throw new Error('PDF contains no extractable text (may be image-based)');
     }
 
-    console.log(`✅ PDF extraction successful: ${data.numpages} pages, ${data.text.length} characters`);
+  console.log(`PDF extraction successful: ${data.numpages} pages, ${data.text.length} characters`);
     return data.text;
 
   } catch (error) {
@@ -68,7 +68,7 @@ export async function extractDocx(buffer: Buffer): Promise<string> {
       throw new Error('DOCX buffer is empty or invalid');
     }
 
-    console.log(`📝 Extracting text from DOCX (${buffer.length} bytes)`);
+  console.log(`Extracting text from DOCX (${buffer.length} bytes)`);
     
     // Try mammoth first (best quality extraction)
     try {
@@ -82,7 +82,7 @@ export async function extractDocx(buffer: Buffer): Promise<string> {
         throw new Error('DOCX contains no extractable text');
       }
 
-      console.log(`✅ DOCX extraction successful: ${result.value.length} characters`);
+  console.log(`DOCX extraction successful: ${result.value.length} characters`);
       return result.value;
 
     } catch (mammothError) {
@@ -93,7 +93,7 @@ export async function extractDocx(buffer: Buffer): Promise<string> {
       const text = await extractDocxFallback(buffer);
       
       if (text && text.trim().length > 0) {
-        console.log('⚠️ DOCX fallback extraction successful');
+  console.log('DOCX fallback extraction successful');
         return text;
       }
       
@@ -121,7 +121,7 @@ export async function extractDocx(buffer: Buffer): Promise<string> {
  */
 async function extractDocxFallback(buffer: Buffer): Promise<string> {
   try {
-    console.log('🔄 Attempting DOCX fallback extraction...');
+  console.log('Attempting DOCX fallback extraction...');
     
     // Convert buffer to string and try to extract readable text
     // This is a very basic approach and may not work for all files
@@ -138,7 +138,7 @@ async function extractDocxFallback(buffer: Buffer): Promise<string> {
     const meaningfulText = cleanText.match(/[a-zA-Z]{3,}/g);
     
     if (meaningfulText && meaningfulText.length > 5) {
-      console.log('⚠️ Fallback extraction found some text, but quality may be poor');
+  console.log('Fallback extraction found some text, but quality may be poor');
       return cleanText.substring(0, 5000); // Limit to reasonable length
     }
     
@@ -161,7 +161,7 @@ export async function extractTxt(buffer: Buffer): Promise<string> {
       throw new Error('TXT buffer is empty or invalid');
     }
 
-    console.log(`📄 Extracting text from TXT (${buffer.length} bytes)`);
+  console.log(`Extracting text from TXT (${buffer.length} bytes)`);
     
     // Try UTF-8 first
     let text = buffer.toString('utf8');
@@ -176,7 +176,7 @@ export async function extractTxt(buffer: Buffer): Promise<string> {
       throw new Error('TXT file is empty or contains no readable text');
     }
 
-    console.log(`✅ TXT extraction successful: ${text.length} characters`);
+  console.log(`TXT extraction successful: ${text.length} characters`);
     return text;
 
   } catch (error) {
@@ -215,7 +215,7 @@ export async function detectAndExtract(file: File | FileInput): Promise<string> 
       filename = file.filename;
     }
 
-    console.log(`🔍 Detecting file type: ${filename} (${mimeType})`);
+  console.log(`Detecting file type: ${filename} (${mimeType})`);
     
     // Detect file type by MIME type first, then by extension
     const fileType = detectFileType(mimeType, filename);
@@ -247,7 +247,7 @@ export async function detectAndExtract(file: File | FileInput): Promise<string> 
       throw new Error('Extracted text is too short to generate meaningful quiz questions');
     }
     
-    console.log(`✅ Text extraction complete: ${normalizedText.length} characters`);
+  console.log(`Text extraction complete: ${normalizedText.length} characters`);
     return normalizedText;
 
   } catch (error) {

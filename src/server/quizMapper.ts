@@ -3,8 +3,9 @@
  * Converts between QuizPayload types and Prisma database models
  */
 
-import { QuizPayload, MCQ, Essay, QuizMetadata } from '@/lib/quizSchema';
+import { QuizPayload } from '@/lib/quizSchema';
 import { prisma } from './db';
+// Note: Avoid importing Prisma values to keep this file decoupled from client generation timing
 
 /**
  * Convert QuizPayload to database format
@@ -17,6 +18,8 @@ export interface CreateQuizData {
   level: 'X' | 'XI' | 'XII' | 'GENERAL';
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   userId: string;
+  // Persisted raw quiz content for auditing/search (required JSON column in DB)
+  content: unknown;
   multipleChoice: Array<{
     question: string;
     optionA: string;
@@ -48,12 +51,14 @@ export function mapQuizPayloadToDatabase(
     level: quizPayload.metadata.level === 'General' ? 'GENERAL' : quizPayload.metadata.level,
     status: mapStatus(quizPayload.metadata.status),
     userId,
+    // Store full payload as JSON to satisfy required `content` field
+    content: quizPayload,
     multipleChoice: quizPayload.multipleChoice.map((mcq, index) => ({
       question: mcq.question,
-      optionA: mcq.options[0],
-      optionB: mcq.options[1],
-      optionC: mcq.options[2],
-      optionD: mcq.options[3],
+      optionA: mcq.options[0] ?? '',
+      optionB: mcq.options[1] ?? '',
+      optionC: mcq.options[2] ?? '',
+      optionD: mcq.options[3] ?? '',
       answerIndex: mcq.answerIndex,
       explanation: mcq.explanation,
       order: index + 1,
@@ -73,10 +78,10 @@ export async function mapDatabaseToQuizPayload(quizId: string): Promise<QuizPayl
   const quiz = await prisma.quiz.findUnique({
     where: { id: quizId },
     include: {
-      multipleChoice: {
+      mcqQuestions: {
         orderBy: { order: 'asc' }
       },
-      essays: {
+      essayQuestions: {
         orderBy: { order: 'asc' }
       }
     }
@@ -90,19 +95,20 @@ export async function mapDatabaseToQuizPayload(quizId: string): Promise<QuizPayl
     id: quiz.id,
     metadata: {
       topic: quiz.topic,
-      level: quiz.level as 'X' | 'XI' | 'XII' | 'General',
+      // Normalize DB value 'GENERAL' -> 'General' for payload consistency
+      level: (quiz.level === 'GENERAL' ? 'General' : quiz.level) as 'X' | 'XI' | 'XII' | 'General',
       createdAt: quiz.createdAt.toISOString(),
       updatedAt: quiz.updatedAt.toISOString(),
       description: quiz.description || undefined,
       status: mapDatabaseStatus(quiz.status),
     },
-    multipleChoice: quiz.multipleChoice.map((mcq: any) => ({
+    multipleChoice: quiz.mcqQuestions.map((mcq) => ({
       question: mcq.question,
       options: [mcq.optionA, mcq.optionB, mcq.optionC, mcq.optionD] as [string, string, string, string],
       answerIndex: mcq.answerIndex as 0 | 1 | 2 | 3,
       explanation: mcq.explanation || undefined,
     })),
-    essay: quiz.essays.map((essay: any) => ({
+    essay: quiz.essayQuestions.map((essay) => ({
       question: essay.question,
       rubric: essay.rubric,
     })),
@@ -117,7 +123,7 @@ export async function createQuizWithQuestions(
   quizData: CreateQuizData
 ): Promise<{ success: boolean; quizId?: string; error?: string }> {
   try {
-    const result = await prisma.$transaction(async (tx: any) => {
+    const result = await prisma.$transaction(async (tx) => {
       // Ensure user exists, create if not
       await tx.user.upsert({
         where: { id: quizData.userId },
@@ -138,6 +144,8 @@ export async function createQuizWithQuestions(
           level: quizData.level,
           status: quizData.status,
           userId: quizData.userId,
+          // Ensure required JSON column is provided
+          content: quizData.content ?? {},
         },
       });
 
@@ -182,9 +190,9 @@ export async function updateQuizWithQuestions(
   quizData: Partial<CreateQuizData>
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx) => {
       // Update quiz metadata
-      const updateData: any = {};
+      const updateData: Record<string, unknown> = {};
       if (quizData.title) updateData.title = quizData.title;
       if (quizData.description !== undefined) updateData.description = quizData.description;
       if (quizData.topic) updateData.topic = quizData.topic;
@@ -280,7 +288,7 @@ export async function getQuizStatistics(userId: string) {
   const stats = await prisma.quiz.groupBy({
     by: ['status'],
     where: { userId },
-    _count: true,
+    _count: { _all: true },
   });
 
   const totalMCQs = await prisma.questionMCQ.count({
@@ -296,11 +304,11 @@ export async function getQuizStatistics(userId: string) {
   });
 
   return {
-    total: stats.reduce((acc: number, stat: any) => acc + stat._count, 0),
+  total: stats.reduce((acc, stat) => acc + (stat._count?._all ?? 0), 0),
     byStatus: {
-      draft: stats.find((s: any) => s.status === 'DRAFT')?._count || 0,
-      published: stats.find((s: any) => s.status === 'PUBLISHED')?._count || 0,
-      archived: stats.find((s: any) => s.status === 'ARCHIVED')?._count || 0,
+      draft: stats.find((s) => s.status === 'DRAFT')?._count?._all ?? 0,
+      published: stats.find((s) => s.status === 'PUBLISHED')?._count?._all ?? 0,
+      archived: stats.find((s) => s.status === 'ARCHIVED')?._count?._all ?? 0,
     },
     totalQuestions: {
       mcq: totalMCQs,

@@ -401,6 +401,9 @@ export default function QuizDetail() {
             <span>Back</span>
           </Button>
         </div>
+        <div className="mb-6 no-print flex items-center gap-3">
+          <a href={`/practice/${quiz.id}?topic=${encodeURIComponent(quiz.metadata.topic)}&level=${encodeURIComponent(quiz.metadata.level)}`} className="px-4 py-2 rounded-lg bg-black text-white">Start Adaptive Practice</a>
+        </div>
 
         {/* Header */}
         <div className="mb-8 no-print mt-4">

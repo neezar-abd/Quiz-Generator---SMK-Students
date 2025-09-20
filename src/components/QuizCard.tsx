@@ -52,7 +52,7 @@ const QuizCard = memo<QuizCardProps>(function QuizCard({ quiz, onShare, onExport
         month: 'short',
         day: 'numeric'
       }));
-    } catch (error) {
+    } catch {
       setDisplayDate(formatDate(quiz.metadata.createdAt));
     }
   }, [quiz.metadata.createdAt]);
@@ -104,6 +104,11 @@ const QuizCard = memo<QuizCardProps>(function QuizCard({ quiz, onShare, onExport
         <Link href={`/quiz/${quiz.id}`}>
           <button className="flex-1 px-3 py-2 border border-black/20 text-black rounded-lg hover:bg-black/5 transition-colors font-medium text-sm">
             View
+          </button>
+        </Link>
+        <Link href={`/practice/${quiz.id}?topic=${encodeURIComponent(quiz.metadata.topic)}&level=${encodeURIComponent(quiz.metadata.level)}`}>
+          <button className="flex-1 px-3 py-2 bg-black text-white rounded-lg hover:bg-black/90 transition-colors font-medium text-sm">
+            Practice
           </button>
         </Link>
         

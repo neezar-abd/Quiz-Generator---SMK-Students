@@ -50,20 +50,20 @@ export async function GET() {
     const quizzes = await prisma.quiz.findMany({
       include: {
         user: true,
-        multipleChoice: true,
-        essays: true
+        mcqQuestions: true,
+        essayQuestions: true
       }
     });
 
     return NextResponse.json({
       success: true,
       data: {
-        users: users.map((u: any) => ({ id: u.id, email: u.email, name: u.name })),
-        quizzes: quizzes.map((q: any) => ({ 
+        users: users.map((u) => ({ id: u.id, email: u.email, name: u.name })),
+        quizzes: quizzes.map((q) => ({ 
           id: q.id, 
           title: q.title, 
           user: q.user.email,
-          questionCount: q.multipleChoice.length + q.essays.length 
+          questionCount: q.mcqQuestions.length + q.essayQuestions.length 
         })),
         counts: {
           users: users.length,

@@ -26,8 +26,7 @@ export type {
 // Import types for use in this file
 import type {
   QuizPayload,
-  GenerateQuizRequest,
-  PartialQuizPayload
+  GenerateQuizRequest
 } from '@/lib/quizSchema';
 
 // Additional types for application state management

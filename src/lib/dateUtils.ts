@@ -11,9 +11,11 @@ export function formatDate(dateString: string): string {
   try {
     const date = new Date(dateString);
     
-    // Use toISOString().split('T')[0] for consistent YYYY-MM-DD format
-    return date.toISOString().split('T')[0];
-  } catch (error) {
+  // Use toISOString and safely get date part for consistent YYYY-MM-DD format
+  const iso = date.toISOString();
+  const parts = iso.split('T');
+  return (parts[0] ?? iso);
+  } catch {
     console.warn('Invalid date string:', dateString);
     return 'Invalid Date';
   }
@@ -37,7 +39,7 @@ export function formatDateForDisplay(dateString: string): string {
       month: 'short',
       day: 'numeric'
     });
-  } catch (error) {
+  } catch {
     return formatDate(dateString);
   }
 }
@@ -63,7 +65,7 @@ export function getRelativeTime(dateString: string): string {
     if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
     
     return formatDateForDisplay(dateString);
-  } catch (error) {
+  } catch {
     return formatDate(dateString);
   }
 }

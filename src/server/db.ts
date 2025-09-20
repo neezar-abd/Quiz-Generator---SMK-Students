@@ -3,7 +3,7 @@
  * Handles connection pooling and global client management
  */
 
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 // Prevent multiple instances in development
 const globalForPrisma = globalThis as unknown as {
@@ -58,9 +58,9 @@ export async function disconnectDatabase(): Promise<void> {
  * Provides atomic operations with proper error handling
  */
 export async function withTransaction<T>(
-  operation: (tx: any) => Promise<T>
+  operation: (tx: unknown) => Promise<T>
 ): Promise<T> {
-  return await prisma.$transaction(async (tx: any) => {
+  return await prisma.$transaction(async (tx) => {
     return await operation(tx);
   });
 }
@@ -81,11 +81,8 @@ export async function cleanDatabase(): Promise<void> {
   await prisma.user.deleteMany();
 }
 
-// Re-export Prisma for convenience
-export { Prisma } from '@prisma/client';
-
 // Types will be available after database setup
-export type DatabaseUser = any;
-export type DatabaseQuiz = any;
-export type DatabaseQuestionMCQ = any;
-export type DatabaseQuestionEssay = any;
+export type DatabaseUser = unknown;
+export type DatabaseQuiz = unknown;
+export type DatabaseQuestionMCQ = unknown;
+export type DatabaseQuestionEssay = unknown;

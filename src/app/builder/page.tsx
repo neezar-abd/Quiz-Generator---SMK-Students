@@ -119,7 +119,9 @@ function BuilderContent() {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     
     if (targetIndex >= 0 && targetIndex < newMCQs.length) {
-      [newMCQs[index], newMCQs[targetIndex]] = [newMCQs[targetIndex], newMCQs[index]];
+      const tmp = newMCQs[index];
+      newMCQs[index] = newMCQs[targetIndex]!;
+      newMCQs[targetIndex] = tmp!;
       setQuiz(prev => ({ ...prev!, multipleChoice: newMCQs }));
       markAsChanged();
     }
@@ -132,7 +134,9 @@ function BuilderContent() {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     
     if (targetIndex >= 0 && targetIndex < newEssays.length) {
-      [newEssays[index], newEssays[targetIndex]] = [newEssays[targetIndex], newEssays[index]];
+      const tmp = newEssays[index];
+      newEssays[index] = newEssays[targetIndex]!;
+      newEssays[targetIndex] = tmp!;
       setQuiz(prev => ({ ...prev!, essay: newEssays }));
       markAsChanged();
     }

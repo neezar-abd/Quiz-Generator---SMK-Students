@@ -13,7 +13,7 @@ async function main() {
     },
   });
 
-  console.log('✅ Default user created or updated:', user);
+  console.log('Default user created or updated:', user);
 }
 
 main()

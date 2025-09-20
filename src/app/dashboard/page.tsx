@@ -3,9 +3,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { useSession } from 'next-auth/react';
 import { useQuizStore } from '@/hooks/useQuizStore';
 import { useStableQuizActions } from '@/hooks/useStableQuizActions';
 import { QuizPayload } from '@/types/quiz';
+import { SectionAnimated } from '@/components/animations';
 
 // Dynamic imports for better performance
 const QuizCard = dynamic(() => import('@/components/QuizCard'), {
@@ -17,11 +19,13 @@ const ShareDialog = dynamic(() => import('@/components/ShareDialog'), {
 });
 
 export default function Dashboard() {
+  const { data: session, status } = useSession();
   const { state } = useQuizStore();
-  const stableActions = useStableQuizActions();
+  const { loadQuizzes: loadQuizzesStable } = useStableQuizActions();
   const [searchTerm, setSearchTerm] = useState('');
   const [levelFilter, setLevelFilter] = useState('');
   const [shareQuiz, setShareQuiz] = useState<QuizPayload | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Memoize level options
   const levelOptions = useMemo(() => [
@@ -37,6 +41,25 @@ export default function Dashboard() {
     Array.isArray(state.quizzes) ? state.quizzes : [], 
     [state.quizzes]
   );
+
+  // Fetch user's quizzes sekali saat sudah authenticated
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session?.user) {
+      setIsLoading(false);
+      return;
+    }
+    (async () => {
+      try {
+        setIsLoading(true);
+        await loadQuizzesStable();
+      } catch (err) {
+        console.error('Error loading quizzes:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [session?.user, status, loadQuizzesStable]);
 
   // Memoize filtered quizzes
   const filteredQuizzes = useMemo(() => 
@@ -111,17 +134,70 @@ export default function Dashboard() {
   }, []);
 
   // Load quizzes when component mounts
-  useEffect(() => {
-    stableActions.loadQuizzes().catch((error) => {
-      console.error('Failed to load quizzes:', error);
-    });
-  }, [stableActions.loadQuizzes]);
+  // Show loading while checking authentication
+  if (status === 'loading' || isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30 pt-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-12 bg-black/10 rounded-lg w-64 mx-auto mb-4"></div>
+              <div className="h-6 bg-black/5 rounded-lg w-96 mx-auto mb-8"></div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-black/10 p-6 animate-pulse">
+                  <div className="h-12 bg-black/5 rounded-xl mx-auto mb-3"></div>
+                  <div className="h-8 bg-black/10 rounded mb-1"></div>
+                  <div className="h-4 bg-black/5 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!session?.user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30 pt-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="w-24 h-24 bg-black/5 rounded-full flex items-center justify-center mx-auto mb-8">
+              <svg className="w-12 h-12 text-black/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h1 className="text-4xl font-bold text-black mb-4">Welcome to Your Dashboard</h1>
+            <p className="text-lg text-black/60 mb-8">
+              Please login to access your personal quiz collection and create new assessments.
+            </p>
+            <Link
+              href="/"
+              prefetch
+              className="inline-flex items-center px-8 py-4 bg-black !text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Login to Continue
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30 pt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        <SectionAnimated className="text-center mb-12">
           <h1 className="text-4xl lg:text-5xl font-bold text-black mb-4 tracking-tight">
             Quiz Dashboard
           </h1>
@@ -131,17 +207,18 @@ export default function Dashboard() {
           
           <Link
             href="/upload"
-            className="inline-flex items-center px-8 py-4 bg-black text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+            prefetch
+            className="inline-flex items-center px-8 py-4 bg-black !text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             Create New Quiz
           </Link>
-        </div>
+        </SectionAnimated>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 mb-12">
+        <SectionAnimated className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 mb-12">
           <div className="bg-white rounded-2xl border border-black/10 shadow-sm p-6 text-center hover:-translate-y-1 transition-all duration-200">
             <div className="w-12 h-12 bg-black/5 rounded-xl flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-black/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,10 +262,10 @@ export default function Dashboard() {
             <div className="text-black/60 text-sm font-medium">Total Questions</div>
             <div className="text-xs text-black/40 mt-1">MCQ + Essay questions</div>
           </div>
-        </div>
+        </SectionAnimated>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-2xl border border-black/10 shadow-sm p-6 mb-8">
+        <SectionAnimated className="bg-white rounded-2xl border border-black/10 shadow-sm p-6 mb-8">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-black mb-2">Search Quizzes</label>
@@ -238,10 +315,10 @@ export default function Dashboard() {
               </button>
             )}
           </div>
-        </div>
+        </SectionAnimated>
 
         {/* Quiz Grid */}
-        <div className="space-y-6">
+        <SectionAnimated className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-black">Your Quizzes</h2>
             <div className="flex items-center space-x-2 text-sm text-black/60">
@@ -283,7 +360,8 @@ export default function Dashboard() {
               </p>
               <Link
                 href="/upload"
-                className="inline-flex items-center px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200"
+                prefetch
+                className="inline-flex items-center px-6 py-3 bg-black !text-white rounded-xl font-medium hover:bg-black/90 transition-all duration-200"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -303,7 +381,7 @@ export default function Dashboard() {
               ))}
             </div>
           )}
-        </div>
+        </SectionAnimated>
       </div>
 
       {/* Share Dialog */}

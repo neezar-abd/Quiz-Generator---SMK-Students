@@ -8,16 +8,16 @@
 require('dotenv').config({ path: '.env.local' });
 
 async function testConnection() {
-  console.log('🔍 Testing Supabase Connection...\n');
+  console.log('Testing Supabase Connection...\n');
 
   // Check environment variables
-  console.log('📋 Environment Check:');
+  console.log('Environment Check:');
   console.log('- NODE_ENV:', process.env.NODE_ENV || 'not set');
   console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
   
   if (!process.env.DATABASE_URL) {
-    console.log('❌ DATABASE_URL not found in environment variables');
-    console.log('💡 Make sure to create .env.local with your Supabase DATABASE_URL\n');
+  console.log('DATABASE_URL not found in environment variables');
+  console.log('Tip: Make sure to create .env.local with your Supabase DATABASE_URL\n');
     process.exit(1);
   }
 
@@ -29,14 +29,14 @@ async function testConnection() {
   console.log('- DATABASE_URL preview:', dbUrl.substring(0, 20) + '...\n');
 
   if (!isValidFormat) {
-    console.log('❌ Invalid DATABASE_URL format');
-    console.log('💡 Should start with postgresql:// or postgres://\n');
+  console.log('Invalid DATABASE_URL format');
+  console.log('Tip: Should start with postgresql:// or postgres://\n');
     process.exit(1);
   }
 
   // Try to import and test Prisma
   try {
-    console.log('🔌 Testing Database Connection...');
+  console.log('Testing Database Connection...');
     
     // Dynamic import to handle potential module issues
     const { PrismaClient } = require('@prisma/client');
@@ -44,7 +44,7 @@ async function testConnection() {
 
     // Test basic connection
     await prisma.$queryRaw`SELECT 1 as test`;
-    console.log('✅ Basic connection successful');
+  console.log('Basic connection successful');
 
     // Test table existence
     const tables = await prisma.$queryRaw`
@@ -54,11 +54,11 @@ async function testConnection() {
       AND table_name IN ('User', 'Quiz', 'QuestionMCQ', 'QuestionEssay')
     `;
 
-    console.log('✅ Table check completed');
-    console.log('📊 Tables found:', tables.length);
+  console.log('Table check completed');
+  console.log('Tables found:', tables.length);
 
     if (tables.length === 0) {
-      console.log('⚠️  No quiz tables found. You may need to run the SQL setup script.');
+  console.log('Warning: No quiz tables found. You may need to run the SQL setup script.');
     } else {
       console.log('Tables:', tables.map(t => t.table_name).join(', '));
     }
@@ -67,22 +67,22 @@ async function testConnection() {
     try {
       const userCount = await prisma.user.count();
       const quizCount = await prisma.quiz.count();
-      console.log('📈 Record counts:');
+  console.log('Record counts:');
       console.log('- Users:', userCount);
       console.log('- Quizzes:', quizCount);
     } catch (countError) {
-      console.log('⚠️  Could not get record counts (tables might not exist yet)');
+  console.log('Warning: Could not get record counts (tables might not exist yet)');
     }
 
     await prisma.$disconnect();
-    console.log('\n🎉 Supabase connection test PASSED!');
+  console.log('\nSupabase connection test PASSED!');
     console.log('Your database is ready for the AI Quiz Generator.\n');
 
   } catch (error) {
-    console.log('❌ Database connection FAILED');
+  console.log('Database connection FAILED');
     console.error('Error:', error.message);
     
-    console.log('\n💡 Troubleshooting steps:');
+  console.log('\nTroubleshooting steps:');
     console.log('1. Check your DATABASE_URL in .env.local');
     console.log('2. Ensure your Supabase project is active');
     console.log('3. Run: npx prisma generate');

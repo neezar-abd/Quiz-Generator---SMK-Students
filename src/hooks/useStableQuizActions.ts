@@ -9,22 +9,36 @@ import { QuizPayload } from '@/types/quiz';
 
 export function useStableQuizActions() {
   const { actions } = useQuizStore();
+  const {
+    loadQuizzes,
+    saveQuiz,
+    updateQuiz,
+    deleteQuiz,
+    generateQuiz,
+    generateQuizFromFile,
+    getQuizById,
+    clearError,
+    setLoading,
+    setCurrentQuiz,
+    getQuizzesByLevel,
+    getRecentQuizzes,
+  } = actions;
 
   const stableLoadQuizzes = useCallback(() => {
-    return actions.loadQuizzes();
-  }, []);
+    return loadQuizzes();
+  }, [loadQuizzes]);
 
   const stableSaveQuiz = useCallback((quiz: QuizPayload) => {
-    return actions.saveQuiz(quiz);
-  }, []);
+    return saveQuiz(quiz);
+  }, [saveQuiz]);
 
   const stableUpdateQuiz = useCallback((quiz: QuizPayload) => {
-    return actions.updateQuiz(quiz);
-  }, []);
+    return updateQuiz(quiz);
+  }, [updateQuiz]);
 
   const stableDeleteQuiz = useCallback((id: string) => {
-    return actions.deleteQuiz(id);
-  }, []);
+    return deleteQuiz(id);
+  }, [deleteQuiz]);
 
   return {
     loadQuizzes: stableLoadQuizzes,
@@ -32,13 +46,13 @@ export function useStableQuizActions() {
     updateQuiz: stableUpdateQuiz,
     deleteQuiz: stableDeleteQuiz,
     // Pass through other actions that don't cause re-renders
-    generateQuiz: actions.generateQuiz,
-    generateQuizFromFile: actions.generateQuizFromFile,
-    getQuizById: actions.getQuizById,
-    clearError: actions.clearError,
-    setLoading: actions.setLoading,
-    setCurrentQuiz: actions.setCurrentQuiz,
-    getQuizzesByLevel: actions.getQuizzesByLevel,
-    getRecentQuizzes: actions.getRecentQuizzes,
+    generateQuiz,
+    generateQuizFromFile,
+    getQuizById,
+    clearError,
+    setLoading,
+    setCurrentQuiz,
+    getQuizzesByLevel,
+    getRecentQuizzes,
   };
 }

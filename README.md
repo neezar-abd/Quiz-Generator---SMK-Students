@@ -1,8 +1,8 @@
-# AI Quiz Generator 🎯
+# AI Quiz Generator
 
 A clean, minimalist frontend for an AI-powered quiz generation system designed for SMK (Vocational High School) students and teachers. Upload study materials and generate intelligent quizzes with AI assistance.
 
-## Features ✨
+## Features
 
 - **Clean Black & White UI**: Minimalist, professional design focused on usability
 - **File Upload System**: Drag & drop interface for PDF, DOC, and DOCX files
@@ -13,7 +13,7 @@ A clean, minimalist frontend for an AI-powered quiz generation system designed f
 - **Responsive Design**: Optimized for mobile, tablet, and desktop devices
 - **Built with Modern Stack**: Next.js 14, TypeScript, Tailwind CSS, Prisma ORM
 
-## Tech Stack 🛠️
+## Tech Stack
 
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
@@ -23,7 +23,7 @@ A clean, minimalist frontend for an AI-powered quiz generation system designed f
 - **Code Quality**: ESLint configuration
 - **Architecture**: Full-stack with API routes and database persistence
 
-## Project Structure 📁
+## Project Structure
 
 ```
 src/
@@ -38,7 +38,7 @@ src/
     └── Footer.tsx           # Footer component
 ```
 
-## Pages Overview 📄
+## Pages Overview
 
 ### Home Page
 - Hero section with compelling title and CTA
@@ -57,7 +57,7 @@ src/
 - Quick action buttons
 - Progress tracking capabilities
 
-## Getting Started 🚀
+## Getting Started
 
 ### Prerequisites
 
@@ -119,7 +119,7 @@ npm run start    # Start production server
 npm run lint     # Run ESLint
 ```
 
-## Design Principles 🎨
+## Design Principles
 
 - **Minimalist Aesthetic**: Black and white color scheme only
 - **Mobile-First**: Responsive design starting from mobile devices  
@@ -127,7 +127,7 @@ npm run lint     # Run ESLint
 - **Consistent Spacing**: Tailwind's spacing system for uniformity
 - **Accessible UI**: High contrast and keyboard navigation support
 
-## Features Completed ✅
+## Features Completed
 
 - **Database Persistence**: Full CRUD operations with Supabase + Prisma
 - **AI Quiz Generation**: Transform PDFs/documents into intelligent quizzes
@@ -154,6 +154,6 @@ This is a frontend skeleton ready for backend integration. The codebase is struc
 - Styling is consistent with Tailwind utilities
 - Code is ESLint compliant
 
-## License 📝
+## License
 
 Built for educational purposes as a frontend skeleton for AI quiz generation systems.

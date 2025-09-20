@@ -24,7 +24,7 @@ export default function Dropzone({
     
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      onFileSelect(files[0]);
+      onFileSelect(files[0]!);
     }
   };
 
@@ -41,7 +41,7 @@ export default function Dropzone({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      onFileSelect(files[0]);
+      onFileSelect(files[0]!);
     }
   };
 
@@ -75,7 +75,7 @@ export default function Dropzone({
       {children || (
         <div className="space-y-4">
           <div className="w-12 h-12 bg-black/10 mx-auto rounded-lg flex items-center justify-center">
-            <span className="text-black/60 text-xl">📁</span>
+            <span className="text-black/60 text-xl">FILE</span>
           </div>
           <div>
             <p className="text-lg font-medium text-black">

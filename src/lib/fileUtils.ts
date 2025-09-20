@@ -58,11 +58,11 @@ export function validateFileClient(file: File): { valid: boolean; error?: string
 export function getFileIcon(fileName: string): string {
   const extension = fileName.toLowerCase().split('.').pop();
   switch (extension) {
-    case 'pdf': return '📄';
+    case 'pdf': return 'PDF';
     case 'doc':
-    case 'docx': return '📝';
-    case 'txt': return '📋';
-    default: return '📁';
+    case 'docx': return 'DOC';
+    case 'txt': return 'TXT';
+    default: return 'FILE';
   }
 }
 

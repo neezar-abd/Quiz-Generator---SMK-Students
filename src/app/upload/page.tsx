@@ -7,6 +7,7 @@ import { useQuizStore } from '@/hooks/useQuizStore';
 import { GenerateQuizRequest } from '@/types/quiz';
 import { validateFileClient } from '@/lib/fileUtils';
 import AIThinkingLoader from '@/components/AIThinkingLoader';
+import { SectionAnimated } from '@/components/animations';
 
 type InputMethod = 'file' | 'text';
 
@@ -111,21 +112,21 @@ export default function Upload() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30 pt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+        <SectionAnimated className="lg:grid lg:grid-cols-12 lg:gap-8">
           {/* Left Panel - Upload Section */}
           <div className="lg:col-span-7 space-y-8">
             {/* Header */}
-            <div className="text-center lg:text-left">
+            <SectionAnimated className="text-center lg:text-left">
               <h1 className="text-4xl lg:text-5xl font-bold text-black mb-4 tracking-tight">
                 Create Your Quiz
               </h1>
               <p className="text-lg text-black/60 max-w-2xl">
                 Upload your study materials or paste text content to generate intelligent quizzes powered by AI.
               </p>
-            </div>
+            </SectionAnimated>
 
             {/* Input Method Tabs */}
-            <div className="bg-white rounded-2xl border border-black/10 shadow-sm overflow-hidden">
+            <SectionAnimated className="bg-white rounded-2xl border border-black/10 shadow-sm overflow-hidden">
               <div className="border-b border-black/10">
                 <nav className="flex">
                   <button
@@ -136,7 +137,7 @@ export default function Upload() {
                         : 'text-black/60 hover:text-black hover:bg-black/5'
                     }`}
                   >
-                    📁 Upload File
+                    Upload File
                   </button>
                   <button
                     onClick={() => setInputMethod('text')}
@@ -146,7 +147,7 @@ export default function Upload() {
                         : 'text-black/60 hover:text-black hover:bg-black/5'
                     }`}
                   >
-                    📝 Paste Text
+                    Paste Text
                   </button>
                 </nav>
               </div>
@@ -203,10 +204,10 @@ export default function Upload() {
                   </div>
                 )}
               </div>
-            </div>
+            </SectionAnimated>
 
             {/* Quiz Options */}
-            <div className="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
+            <SectionAnimated className="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
               <h3 className="text-lg font-semibold text-black mb-4">Quiz Settings</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -226,7 +227,7 @@ export default function Upload() {
                   <select
                     className="w-full p-3 border border-black/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30"
                     value={formData.level}
-                    onChange={(e) => setFormData(prev => ({ ...prev, level: e.target.value as any }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, level: e.target.value as 'X' | 'XI' | 'XII' | 'General' }))}
                   >
                     {levelOptions.map(option => (
                       <option key={option.value} value={option.value}>
@@ -260,15 +261,15 @@ export default function Upload() {
                   />
                 </div>
               </div>
-            </div>
+            </SectionAnimated>
 
             {/* Guidelines (Collapsible) */}
-            <div className="bg-white rounded-2xl border border-black/10 shadow-sm overflow-hidden">
+            <SectionAnimated className="bg-white rounded-2xl border border-black/10 shadow-sm overflow-hidden">
               <button
                 onClick={() => setShowGuidelines(!showGuidelines)}
                 className="w-full p-6 text-left flex items-center justify-between hover:bg-black/5 transition-colors duration-200 border-0"
               >
-                <h3 className="text-lg font-semibold text-black">📋 Upload Guidelines</h3>
+                <h3 className="text-lg font-semibold text-black">Upload Guidelines</h3>
                 <svg
                   className={`w-5 h-5 text-black/60 transition-transform duration-200 ${
                     showGuidelines ? 'rotate-180' : ''
@@ -301,9 +302,10 @@ export default function Upload() {
                   </div>
                 </div>
               )}
-            </div>
+            </SectionAnimated>
 
             {/* Generate Button */}
+            <SectionAnimated>
             <button
               onClick={handleSubmit}
               disabled={state.isLoading}
@@ -323,12 +325,13 @@ export default function Upload() {
                 </div>
               )}
             </button>
+            </SectionAnimated>
           </div>
 
           {/* Right Panel - Sticky Preview */}
           <div className="lg:col-span-5 mt-8 lg:mt-0">
             <div className="lg:sticky lg:top-20 space-y-6">
-              <div className="bg-white rounded-2xl border border-black/10 shadow-sm overflow-hidden">
+              <SectionAnimated className="bg-white rounded-2xl border border-black/10 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-black/10">
                   <h3 className="text-lg font-semibold text-black">Quiz Preview</h3>
                 </div>
@@ -401,10 +404,10 @@ export default function Upload() {
                     </div>
                   )}
                 </div>
-              </div>
+              </SectionAnimated>
             </div>
           </div>
-        </div>
+        </SectionAnimated>
       </div>
     </div>
   );

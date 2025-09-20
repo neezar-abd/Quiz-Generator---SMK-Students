@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import { MCQ, Essay } from '@/types/quiz';
 import Button from './ui/Button';
 import Input from './ui/Input';
@@ -19,16 +19,16 @@ interface MCQEditorProps {
   showAnswers: boolean;
 }
 
-function MCQEditor({ 
-  mcq, 
-  index, 
-  onUpdate, 
-  onDelete, 
-  onMoveUp, 
-  onMoveDown, 
-  canMoveUp, 
+const MCQEditor = memo(function MCQEditor({
+  mcq,
+  index,
+  onUpdate,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp,
   canMoveDown,
-  showAnswers 
+  showAnswers,
 }: MCQEditorProps) {
   const updateQuestion = (question: string) => {
     onUpdate({ ...mcq, question });
@@ -125,7 +125,7 @@ function MCQEditor({
       />
     </div>
   );
-}
+});
 
 interface EssayEditorProps {
   essay: Essay;
@@ -138,15 +138,15 @@ interface EssayEditorProps {
   canMoveDown: boolean;
 }
 
-function EssayEditor({ 
-  essay, 
-  index, 
-  onUpdate, 
-  onDelete, 
-  onMoveUp, 
-  onMoveDown, 
-  canMoveUp, 
-  canMoveDown 
+const EssayEditor = memo(function EssayEditor({
+  essay,
+  index,
+  onUpdate,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp,
+  canMoveDown,
 }: EssayEditorProps) {
   const updateQuestion = (question: string) => {
     onUpdate({ ...essay, question });
@@ -205,7 +205,7 @@ function EssayEditor({
       />
     </div>
   );
-}
+});
 
 interface QuizEditorProps {
   mcqs: MCQ[];

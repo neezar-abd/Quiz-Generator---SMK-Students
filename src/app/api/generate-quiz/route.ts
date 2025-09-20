@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
     let body: unknown;
     try {
       body = await request.json();
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
         { status: 400 }
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
       validatedRequest = GenerateQuizApiRequestSchema.parse(body);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.issues.map(issue => 
+        const errorMessages = error.issues.map((issue: z.ZodIssue) => 
           `${issue.path.join('.')}: ${issue.message}`
         ).join('; ');
         
@@ -253,7 +253,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Use mock data for development
-      console.log('📝 Using mock data (no GEMINI_API_KEY provided)');
+  console.log('Using mock data (no GEMINI_API_KEY provided)');
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
       parsedResponse = generateMockQuiz(
         validatedRequest.topic,

@@ -14,11 +14,11 @@ const Button = memo<ButtonProps>(function Button({
   children,
   ...props 
 }) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'inline-flex items-center justify-center font-medium transition-colors transition-transform focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]';
   
   const variants = {
-    default: 'bg-black text-white hover:bg-black/90',
-    outline: 'border border-black text-black hover:bg-black hover:text-white',
+    default: 'bg-black text-white hover:bg-black/90 shadow-sm hover:shadow-md',
+    outline: 'border border-black text-black hover:bg-black hover:text-white shadow-sm',
     ghost: 'text-black hover:bg-black/5'
   };
   

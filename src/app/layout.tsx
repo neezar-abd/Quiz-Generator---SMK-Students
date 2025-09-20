@@ -3,7 +3,10 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { PageTransition } from "@/components/animations";
+import GlobalSound from "@/components/sound/GlobalSound";
 import { QuizProvider } from "@/hooks/useQuizStore";
+import AuthProvider from "@/components/AuthProvider";
 
 // Satoshi font definition - using relative path from src/app
 const satoshi = localFont({
@@ -45,14 +48,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-            <body className={`${satoshi.variable} font-sans antialiased`} style={{ fontFamily: 'var(--font-satoshi), ui-sans-serif, system-ui, sans-serif' }}>
-        <QuizProvider>
-          <div className="min-h-screen flex flex-col bg-white text-black">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </QuizProvider>
+      <body className={`${satoshi.variable} font-sans antialiased bg-grain`} style={{ fontFamily: 'var(--font-satoshi), ui-sans-serif, system-ui, sans-serif' }}>
+        <AuthProvider>
+          <QuizProvider>
+            <div className="min-h-screen flex flex-col text-black">
+              <Navbar />
+              <GlobalSound />
+              <PageTransition>
+                <main className="flex-grow">{children}</main>
+              </PageTransition>
+              <Footer />
+            </div>
+          </QuizProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -40,11 +40,26 @@ export default function Footer() {
             {/* Center - Developer Info */}
             <div className="flex flex-col space-y-3">
               <h3 className="font-medium text-black text-sm">Developer</h3>
-              <div className="space-y-2 text-sm text-black/60">
-                <p className="font-medium text-black">Neezar Abd</p>
-                <p>SMK Negeri 1 Probolinggo</p>
-                <p>Jurusan RPL Kelas 11</p>
+              <div className="flex items-center space-x-4">
+                {/* Photo with graceful fallback */}
+                <div className="relative w-14 h-14 rounded-full overflow-hidden ring-1 ring-black/10">
+                  <Image
+                    src="/neezar.jpg"
+                    alt="Foto Neezar Abd"
+                    width={56}
+                    height={56}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-medium text-black leading-tight">Neezar Abd</p>
+                  <p className="text-black/60 text-sm leading-snug">SMK Negeri 1 Probolinggo • RPL Kelas 11</p>
+                </div>
               </div>
+              <p className="text-black/60 text-sm leading-relaxed max-w-md">
+                Full‑Stack Web Developer and AI enthusiast focused on teacher productivity, building with Next.js and
+                Supabase/Firebase. Coding Camp 2025 and Axioo Class Program alumnus; SMK Software Engineer.
+              </p>
             </div>
 
             {/* Right - Contact Info */}
@@ -62,7 +77,7 @@ export default function Footer() {
                   <span>nizarabdurr@gmail.com</span>
                 </a>
                 <a 
-                  href="https://instagram.com/neezar_abd" 
+                  href="https://instagram.com/nizarxrpl1" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-black/60 hover:text-black transition-colors duration-200 flex items-center space-x-2"
@@ -70,7 +85,19 @@ export default function Footer() {
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                   </svg>
-                  <span>@neezar_abd</span>
+                  <span>@nizarxrpl1</span>
+                </a>
+                <a 
+                  href="https://www.linkedin.com/in/nizar-abdurr" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-black/60 hover:text-black transition-colors duration-200 flex items-center space-x-2"
+                >
+                  {/* LinkedIn icon */}
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 0H5C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zM7.12 20.45H3.56V9h3.56v11.45zM5.34 7.5c-1.14 0-2.06-.93-2.06-2.06 0-1.14.93-2.06 2.06-2.06 1.14 0 2.06.93 2.06 2.06 0 1.14-.92 2.06-2.06 2.06zM20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.95v5.66h-3.56V9h3.42v1.57h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.34 2.41 4.34 5.53v6.2z"/>
+                  </svg>
+                  <span>LinkedIn</span>
                 </a>
               </div>
             </div>
@@ -79,7 +106,7 @@ export default function Footer() {
           {/* Bottom section - Copyright */}
           <div className="border-t border-black/5 pt-6 flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
             <p className="text-black/40 text-xs">
-              © {currentYear} AI Quiz Generator. Built with ❤️ for SMK students.
+              © {currentYear} AI Quiz Generator. Built with for SMK/SMA students.
             </p>
             <p className="text-black/40 text-xs">
               Empowering education through artificial intelligence

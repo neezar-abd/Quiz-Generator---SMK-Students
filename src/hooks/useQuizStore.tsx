@@ -64,26 +64,26 @@ function quizReducer(state: QuizStoreState, action: QuizAction): QuizStoreState 
 
 // Sanitize quiz before API submit
 function sanitizeQuizForApi(quiz: QuizPayload): QuizPayload {
-  const anyQuiz: any = quiz as any;
-  const { _metadata, ...rest } = anyQuiz;
-  const normalizedLevel = rest.metadata?.level === 'GENERAL' ? 'General' : rest.metadata?.level;
-  const normalizedStatus = typeof rest.metadata?.status === 'string' ? rest.metadata.status.toLowerCase() : rest.metadata?.status;
-  const mcqs = (rest.multipleChoice || []).map((q: any) => ({
-    question: (q.question ?? '').toString().trim(),
-    options: Array.isArray(q.options) && q.options.length === 4 ? q.options.map((o: any) => (o ?? '').toString()) : ['', '', '', ''],
-    answerIndex: typeof q.answerIndex === 'number' ? q.answerIndex : 0,
-    explanation: q.explanation ? String(q.explanation) : undefined
+  const normalizedLevel = quiz.metadata.level; // already 'X' | 'XI' | 'XII' | 'General'
+  const normalizedStatus = (quiz.metadata.status as string)?.toLowerCase?.() as 'draft' | 'published' | 'archived';
+  const mcqs = (quiz.multipleChoice || []).map((q) => ({
+    question: String(q.question ?? '').trim(),
+    options: (Array.isArray(q.options) && q.options.length === 4
+      ? (q.options.map((o) => String(o ?? '')) as [string, string, string, string])
+      : ['', '', '', '']) as [string, string, string, string],
+    answerIndex: typeof q.answerIndex === 'number' ? (q.answerIndex as 0 | 1 | 2 | 3) : 0,
+    explanation: q.explanation ? String(q.explanation) : undefined,
   }));
-  const essays = (rest.essay || []).map((e: any) => ({
-    question: (e.question ?? '').toString().trim(),
-    rubric: (e.rubric ?? '').toString().trim()
+  const essays = (quiz.essay || []).map((e) => ({
+    question: String(e.question ?? '').trim(),
+    rubric: String(e.rubric ?? '').trim(),
   }));
   return {
-    id: rest.id,
-    metadata: { ...rest.metadata, level: normalizedLevel, status: normalizedStatus },
+    id: quiz.id,
+    metadata: { ...quiz.metadata, level: normalizedLevel as 'X' | 'XI' | 'XII' | 'General', status: normalizedStatus },
     multipleChoice: mcqs,
-    essay: essays
-  } as QuizPayload;
+    essay: essays,
+  };
 }
 
 // Context
@@ -120,7 +120,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
   const [state, dispatch] = useReducer(quizReducer, initialState);
 
   // Mock API function for generating quiz
-  const generateQuiz = async (request: GenerateQuizRequest): Promise<QuizPayload> => {
+  const generateQuiz = useCallback(async (request: GenerateQuizRequest): Promise<QuizPayload> => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
 
@@ -168,10 +168,10 @@ export function QuizProvider({ children }: QuizProviderProps) {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [dispatch]);
 
   // New method for file upload quiz generation
-  const generateQuizFromFile = async (file: File, options: {
+  const generateQuizFromFile = useCallback(async (file: File, options: {
     topic: string;
     level: 'X' | 'XI' | 'XII' | 'General';
     mcqCount: number;
@@ -211,7 +211,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [dispatch]);
 
   // Save quiz to database
   const saveQuiz = useCallback(async (quiz: QuizPayload): Promise<void> => {
@@ -257,7 +257,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
   }, []);
 
   // Update quiz in database
-  const updateQuiz = async (quiz: QuizPayload): Promise<void> => {
+  const updateQuiz = useCallback(async (quiz: QuizPayload): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
 
@@ -293,10 +293,10 @@ export function QuizProvider({ children }: QuizProviderProps) {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [dispatch]);
 
   // Delete quiz from database
-  const deleteQuiz = async (id: string): Promise<void> => {
+  const deleteQuiz = useCallback(async (id: string): Promise<void> => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
 
@@ -319,7 +319,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [dispatch]);
 
   // Load all quizzes from API
   const loadQuizzes = useCallback(async (): Promise<void> => {
@@ -350,7 +350,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
       let result;
       try {
         result = JSON.parse(responseText);
-      } catch (parseError) {
+      } catch {
         console.error('Failed to parse quiz response:', responseText);
         throw new Error('Invalid response format from server');
       }
@@ -365,7 +365,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  }, []);
+  }, [dispatch]);
 
   const actions = useMemo(() => ({
     generateQuiz,
@@ -426,64 +426,7 @@ function getDifficultyFromLevel(level: 'X' | 'XI' | 'XII' | 'General'): string {
 }
 
 // Helper functions for generating mock data
-function generateMockMCQs(count: number, topic: string) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `mcq-${i + 1}`,
-    question: `What is the key concept #${i + 1} related to ${topic}?`,
-    options: [
-      `Option A for ${topic} concept ${i + 1}`,
-      `Option B for ${topic} concept ${i + 1}`, 
-      `Option C for ${topic} concept ${i + 1}`,
-      `Option D for ${topic} concept ${i + 1}`
-    ] as [string, string, string, string],
-    answerIndex: Math.floor(Math.random() * 4) as 0 | 1 | 2 | 3,
-    explanation: `This explains why the correct answer relates to ${topic}.`
-  }));
-}
-
-function generateMockEssays(count: number, topic: string) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `essay-${i + 1}`,
-    question: `Explain the importance of ${topic} concept ${i + 1} and provide real-world examples.`,
-    rubric: `Grade based on: understanding of ${topic}, use of examples, clarity of explanation, depth of analysis.`
-  }));
-}
+// removed unused mock generators
 
 // Dummy data for initial state
-function getDummyQuizzes(): QuizPayload[] {
-  return [
-    {
-      id: 'quiz-1',
-      metadata: {
-        topic: 'Basic Electronics Fundamentals',
-        level: 'XI',
-        createdAt: '2024-12-08T10:00:00Z',
-        status: 'published'
-      },
-      multipleChoice: generateMockMCQs(10, 'Electronics'),
-      essay: generateMockEssays(2, 'Electronics')
-    },
-    {
-      id: 'quiz-2', 
-      metadata: {
-        topic: 'Programming Logic & Algorithms',
-        level: 'XII',
-        createdAt: '2024-12-07T14:30:00Z',
-        status: 'draft'
-      },
-      multipleChoice: generateMockMCQs(15, 'Programming'),
-      essay: generateMockEssays(3, 'Programming')
-    },
-    {
-      id: 'quiz-3',
-      metadata: {
-        topic: 'Mechanical Engineering Basics',
-        level: 'X',
-        createdAt: '2024-12-06T09:15:00Z', 
-        status: 'published'
-      },
-      multipleChoice: generateMockMCQs(8, 'Mechanical Engineering'),
-      essay: generateMockEssays(2, 'Mechanical Engineering')
-    }
-  ];
-}
+// removed legacy dummy data generator

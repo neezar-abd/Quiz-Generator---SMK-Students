@@ -7,12 +7,6 @@
 import React from 'react';
 import { SUPPORTED_EXTENSIONS } from '@/lib/fileConstants';
 
-interface ValidationResult {
-  valid: boolean;
-  error?: string;
-  warnings?: string[];
-}
-
 interface FileValidationErrorProps {
   error: string;
   onRetry?: () => void;
@@ -27,7 +21,7 @@ export function FileValidationError({
   return (
     <div className={`bg-red-50 border border-red-200 rounded-lg p-4 ${className}`}>
       <div className="flex items-start gap-3">
-        <span className="text-red-500 text-lg">❌</span>
+  <span className="text-red-500 text-lg">ERROR</span>
         <div className="flex-1">
           <h4 className="font-medium text-red-800 mb-1">File Upload Error</h4>
           <p className="text-red-700 text-sm mb-3">{error}</p>
@@ -62,7 +56,7 @@ export function FileValidationWarning({
   return (
     <div className={`bg-yellow-50 border border-yellow-200 rounded-lg p-4 ${className}`}>
       <div className="flex items-start gap-3">
-        <span className="text-yellow-500 text-lg">⚠️</span>
+  <span className="text-yellow-500 text-lg">WARNING</span>
         <div className="flex-1">
           <h4 className="font-medium text-yellow-800 mb-1">File Validation Warnings</h4>
           <ul className="text-yellow-700 text-sm mb-3 space-y-1">
@@ -113,7 +107,7 @@ export function FileValidationSuccess({
   return (
     <div className={`bg-green-50 border border-green-200 rounded-lg p-4 ${className}`}>
       <div className="flex items-start gap-3">
-        <span className="text-green-500 text-lg">✅</span>
+  <span className="text-green-500 text-lg">OK</span>
         <div className="flex-1">
           <h4 className="font-medium text-green-800 mb-1">File Ready for Processing</h4>
           <div className="text-green-700 text-sm space-y-1">
@@ -143,12 +137,12 @@ export function FileValidationGuide({ className = '' }: FileValidationGuideProps
   return (
     <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
       <div className="flex items-start gap-3">
-        <span className="text-blue-500 text-lg">💡</span>
+  <span className="text-blue-500 text-lg">INFO</span>
         <div className="flex-1">
           <h4 className="font-medium text-blue-800 mb-2">File Upload Guidelines</h4>
           <div className="text-blue-700 text-sm space-y-2">
             <div>
-              <p className="font-medium">✅ Supported Formats:</p>
+              <p className="font-medium">Supported Formats:</p>
               <div className="flex flex-wrap gap-1 mt-1">
                 {SUPPORTED_EXTENSIONS.map((ext) => (
                   <span 
@@ -162,7 +156,7 @@ export function FileValidationGuide({ className = '' }: FileValidationGuideProps
             </div>
             
             <div>
-              <p className="font-medium">📏 File Requirements:</p>
+              <p className="font-medium">File Requirements:</p>
               <ul className="mt-1 space-y-1 text-xs">
                 <li>• Maximum size: 10MB</li>
                 <li>• Must contain readable text (not image-based PDFs)</li>
@@ -171,7 +165,7 @@ export function FileValidationGuide({ className = '' }: FileValidationGuideProps
             </div>
             
             <div>
-              <p className="font-medium">🚫 Common Issues:</p>
+              <p className="font-medium">Common Issues:</p>
               <ul className="mt-1 space-y-1 text-xs">
                 <li>• Scanned PDFs without text layer</li>
                 <li>• Password-protected documents</li>
@@ -205,17 +199,17 @@ export function FileProcessingStatus({
   const getStageInfo = (): { icon: string; label: string; color: 'blue' | 'green' | 'red' | 'gray' } => {
     switch (stage) {
       case 'uploading':
-        return { icon: '📤', label: 'Uploading file...', color: 'blue' };
+        return { icon: 'UPLOAD', label: 'Uploading file...', color: 'blue' };
       case 'extracting':
-        return { icon: '📄', label: 'Extracting text content...', color: 'blue' };
+        return { icon: 'EXTRACT', label: 'Extracting text content...', color: 'blue' };
       case 'generating':
-        return { icon: '🤖', label: 'Generating quiz with AI...', color: 'blue' };
+        return { icon: 'AI', label: 'Generating quiz with AI...', color: 'blue' };
       case 'complete':
-        return { icon: '✅', label: 'Quiz generated successfully!', color: 'green' };
+        return { icon: 'DONE', label: 'Quiz generated successfully!', color: 'green' };
       case 'error':
-        return { icon: '❌', label: 'Processing failed', color: 'red' };
+        return { icon: 'ERROR', label: 'Processing failed', color: 'red' };
       default:
-        return { icon: '⏳', label: 'Processing...', color: 'gray' };
+        return { icon: 'WAIT', label: 'Processing...', color: 'gray' };
     }
   };
 

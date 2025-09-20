@@ -8,6 +8,7 @@
 import { redirect } from 'next/navigation';
 import { detectAndExtract, isSupportedFile, SUPPORTED_EXTENSIONS } from '@/server/extract';
 import { ensureQuizPayload } from '@/lib/quizSchema';
+import type { QuizPayload } from '@/types/quiz';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 /**
@@ -17,7 +18,7 @@ interface UploadResult {
   success: boolean;
   message: string;
   extractedText?: string;
-  quizData?: any;
+  quizData?: QuizPayload;
   error?: string;
 }
 
@@ -28,7 +29,7 @@ interface UploadResult {
  */
 export async function handleFileUpload(formData: FormData): Promise<UploadResult> {
   try {
-    console.log('📤 Processing file upload...');
+  console.log('Processing file upload...');
     
     // Extract form data
     const file = formData.get('file') as File;
@@ -65,7 +66,7 @@ export async function handleFileUpload(formData: FormData): Promise<UploadResult
       };
     }
 
-    console.log(`📋 File validated: ${file.name} (${file.type}, ${(file.size / 1024).toFixed(1)}KB)`);
+  console.log(`File validated: ${file.name} (${file.type}, ${(file.size / 1024).toFixed(1)}KB)`);
 
     // Extract text from file
     let extractedText: string;
@@ -90,7 +91,7 @@ export async function handleFileUpload(formData: FormData): Promise<UploadResult
       };
     }
 
-    console.log(`📝 Text extracted successfully: ${extractedText.length} characters`);
+  console.log(`Text extracted successfully: ${extractedText.length} characters`);
 
     // Generate quiz using extracted text
     try {
@@ -103,7 +104,7 @@ export async function handleFileUpload(formData: FormData): Promise<UploadResult
 
       // Store quiz data in session or database
       // For now, we'll redirect to dashboard with success
-      console.log('✅ Quiz generated successfully');
+  console.log('Quiz generated successfully');
 
       return {
         success: true,
@@ -144,7 +145,7 @@ async function generateQuizFromText(
     includeEssay: boolean;
     topic?: string;
   }
-): Promise<any> {
+): Promise<QuizPayload> {
   const { questionCount, difficulty, includeEssay, topic } = options;
   
   // Map difficulty to valid quiz levels
@@ -217,7 +218,7 @@ IMPORTANT: Return ONLY valid JSON in this exact format. The level MUST be one of
 Generate quiz now:`;
 
   try {
-    console.log('🤖 Generating quiz with Gemini AI...');
+  console.log('Generating quiz with Gemini AI...');
     
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -230,14 +231,14 @@ Generate quiz now:`;
     // Validate with Zod schema
     const validatedQuiz = ensureQuizPayload(parsedData);
     
-    console.log(`✅ Quiz validated: ${validatedQuiz.multipleChoice.length} MCQs, ${validatedQuiz.essay.length} essays`);
+  console.log(`Quiz validated: ${validatedQuiz.multipleChoice.length} MCQs, ${validatedQuiz.essay.length} essays`);
     return validatedQuiz;
 
   } catch (error) {
     console.error('Gemini AI generation failed:', error);
     
     // Return mock quiz as fallback
-    console.log('🔄 Falling back to mock quiz generation...');
+  console.log('Falling back to mock quiz generation...');
     return generateMockQuiz(questionCount, difficulty, includeEssay, text);
   }
 }
@@ -250,12 +251,12 @@ function generateMockQuiz(
   difficulty: string, 
   includeEssay: boolean,
   sourceText: string
-): any {
+): QuizPayload {
   const preview = sourceText.substring(0, 200) + '...';
   
   // Create properly typed arrays
-  const multipleChoiceQuestions: any[] = [];
-  const essayQuestions: any[] = [];
+  const multipleChoiceQuestions: Array<{ question: string; options: [string, string, string, string]; answerIndex: 0|1|2|3; explanation?: string } > = [];
+  const essayQuestions: Array<{ question: string; rubric: string }> = [];
 
   // Generate mock questions based on extracted content
   for (let i = 1; i <= questionCount; i++) {
@@ -266,8 +267,8 @@ function generateMockQuiz(
         'The material covers theoretical foundations',
         'The text describes practical applications', 
         'The document presents case studies and examples'
-      ],
-      answerIndex: 0,
+      ] as [string, string, string, string],
+  answerIndex: 0,
       explanation: `This answer reflects the general educational nature of the uploaded content.`
     });
   }
@@ -280,13 +281,13 @@ function generateMockQuiz(
     });
   }
   
-  const mockQuiz = {
+  const mockQuiz: QuizPayload = {
     id: `mock_quiz_${Date.now()}`,
     metadata: {
       topic: `Content Analysis Quiz (${difficulty})`,
-      level: 'General' as const,
+      level: 'General',
       createdAt: new Date().toISOString(),
-      status: 'draft' as const,
+      status: 'draft',
       description: `This quiz is based on the uploaded content: "${preview}"`
     },
     multipleChoice: multipleChoiceQuestions,

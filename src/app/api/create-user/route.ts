@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST() {
   try {
-    console.log('🔄 Creating default user...');
+  console.log('Creating default user...');
     
     // Create or update default user
     const user = await prisma.user.upsert({
@@ -19,7 +19,7 @@ export async function POST() {
       }
     });
 
-    console.log('✅ Default user created/updated:', user);
+  console.log('Default user created/updated:', user);
 
     return NextResponse.json({ 
       success: true,
@@ -31,7 +31,7 @@ export async function POST() {
       }
     });
   } catch (error) {
-    console.error('❌ Failed to create default user:', error);
+  console.error('Failed to create default user:', error);
     return NextResponse.json({ 
       success: false,
       message: 'Failed to create default user',
