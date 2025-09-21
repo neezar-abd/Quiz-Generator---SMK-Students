@@ -3,7 +3,11 @@
  * Supports file upload processing before sending to Gemini AI
  */
 
-import pdfParse from 'pdf-parse';
+// Import direct implementation to avoid root-level side effects (CLI test code)
+// Types still compatible with @types/pdf-parse
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import pdfParse from 'pdf-parse/lib/pdf-parse.js';
 import mammoth from 'mammoth';
 
 import type { SupportedFileType } from '@/lib/fileConstants';
