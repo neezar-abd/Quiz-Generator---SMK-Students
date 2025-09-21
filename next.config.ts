@@ -34,6 +34,12 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/icons/{{member}}',
+      skipDefaultConversion: true,
+    },
+  },
 };
 
 export default nextConfig;

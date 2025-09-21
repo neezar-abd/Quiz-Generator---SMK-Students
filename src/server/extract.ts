@@ -8,7 +8,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import pdfParse from 'pdf-parse/lib/pdf-parse.js';
-import mammoth from 'mammoth';
+// Lazy import mammoth to avoid heavy bundle unless DOCX actually processed
+let mammothMod: typeof import('mammoth') | null = null;
+async function getMammoth() {
+  if (process.env.DISABLE_DOCX === '1') throw new Error('DOCX support disabled');
+  if (!mammothMod) {
+    mammothMod = await import('mammoth');
+  }
+  return mammothMod;
+}
 
 import type { SupportedFileType } from '@/lib/fileConstants';
 
@@ -76,6 +84,7 @@ export async function extractDocx(buffer: Buffer): Promise<string> {
     
     // Try mammoth first (best quality extraction)
     try {
+      const mammoth = await getMammoth();
       const result = await mammoth.extractRawText({ buffer });
       
       if (result.messages.length > 0) {

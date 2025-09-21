@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { PageTransition } from "@/components/animations";
 import GlobalSound from "@/components/sound/GlobalSound";
 import { QuizProvider } from "@/hooks/useQuizStore";
 import AuthProvider from "@/components/AuthProvider";
@@ -121,9 +120,7 @@ export default function RootLayout({
             <div className="min-h-screen flex flex-col text-black">
               <Navbar />
               <GlobalSound />
-              <PageTransition>
-                <main className="flex-grow">{children}</main>
-              </PageTransition>
+              <main className="flex-grow">{children}</main>
               <Footer />
             </div>
           </QuizProvider>
