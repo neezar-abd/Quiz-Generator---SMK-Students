@@ -5,11 +5,11 @@ import { BadgeCheck, Cpu, Zap } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center pt-28 sm:pt-32 lg:pt-16">
+    <section className="relative w-full overflow-hidden min-h-[92vh] flex items-center justify-center pt-28 sm:pt-32 lg:pt-16">
       {/* Ambient orbs */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-black/5 blur-3xl" />
-        <div className="absolute bottom-[-160px] right-[-80px] w-[520px] h-[520px] rounded-full bg-black/5 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] max-w-none rounded-full bg-black/5 blur-3xl" />
+        <div className="absolute bottom-[-160px] right-[-80px] w-[520px] h-[520px] max-w-none rounded-full bg-black/5 blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
