@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+// Sentry: wrap config for source maps and instrumentation
+// It's safe if DSN/envs are missing; SDK won't send without DSN.
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Performance optimizations (disabled due to build instability on Windows)
@@ -16,7 +19,8 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    formats: ['image/webp', 'image/avif'],
+    // Prefer AVIF first for smaller payloads on modern browsers
+    formats: ['image/avif', 'image/webp'],
   },
 
   // Compression
@@ -42,4 +46,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Client-side source maps upload (optional; no-op without auth/env)
+  silent: true,
+}, {
+  // Disable automatic instrumentation file generation in CI unless configured
+  hideSourceMaps: true,
+});

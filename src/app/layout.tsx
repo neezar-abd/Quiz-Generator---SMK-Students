@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import GlobalSound from "@/components/sound/GlobalSound";
 import { QuizProvider } from "@/hooks/useQuizStore";
 import AuthProvider from "@/components/AuthProvider";
+import Script from "next/script";
 
 // Satoshi font definition - using relative path from src/app
 const satoshi = localFont({
@@ -115,6 +116,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${satoshi.variable} font-sans antialiased bg-grain`} style={{ fontFamily: 'var(--font-satoshi), ui-sans-serif, system-ui, sans-serif' }}>
+        {process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL && process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ? (
+          <Script
+            src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
+        ) : null}
         <AuthProvider>
           <QuizProvider>
             <div className="min-h-screen flex flex-col text-black">

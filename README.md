@@ -161,3 +161,26 @@ MIT License.
 Built for educational purposes and open collaboration.
 
 ---
+
+## Environment Variables
+
+Add the following to your environment (Vercel Project Settings or `.env.local`):
+
+- `NEXT_PUBLIC_SITE_URL` – canonical site URL (e.g., https://soalin.ai)
+- `NEXT_PUBLIC_APP_URL` – fallback app URL if different
+- `NEXTAUTH_URL` – NextAuth base URL
+- `GEMINI_API_KEY` – Google Gemini key
+- `NEXT_PUBLIC_UMAMI_SCRIPT_URL` – Umami script URL (e.g., https://umami.yourdomain.com/script.js)
+- `NEXT_PUBLIC_UMAMI_WEBSITE_ID` – Umami website ID (UUID)
+- `SENTRY_DSN` – Sentry DSN for server/edge
+- `NEXT_PUBLIC_SENTRY_DSN` – Sentry DSN for client
+
+### Analytics & Monitoring
+
+Umami loads automatically when `NEXT_PUBLIC_UMAMI_SCRIPT_URL` and `NEXT_PUBLIC_UMAMI_WEBSITE_ID` are present. You can track a custom event with:
+
+```js
+window.umami?.track('quiz_generated', { topic: '...', level: '...' })
+```
+
+Sentry is integrated via `@sentry/nextjs`. It initializes only if DSN envs are present. Adjust sample rates in `sentry.*.config.ts` as needed.
