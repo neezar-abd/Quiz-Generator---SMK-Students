@@ -64,10 +64,16 @@ export const metadata: Metadata = {
       "Generate high‑quality quizzes instantly from your study materials. Built for SMK students and teachers.",
     images: [
       {
-        url: "/logo_browser.svg",
+        url: `${siteUrl}/img_hero.png`,
+        width: 1200,
+        height: 630,
+        alt: "Soalin AI - AI Quiz Generator for SMK Students",
+      },
+      {
+        url: `${siteUrl}/logo_browser.svg`,
         width: 512,
         height: 512,
-        alt: "Soalin AI",
+        alt: "Soalin AI Logo",
       },
     ],
   },
@@ -80,8 +86,8 @@ export const metadata: Metadata = {
       "Generate high‑quality quizzes instantly from your study materials.",
     images: [
       {
-        url: "/logo_browser.svg",
-        alt: "Soalin AI",
+        url: `${siteUrl}/img_hero.png`,
+        alt: "Soalin AI - AI Quiz Generator for SMK Students",
       },
     ],
   },
