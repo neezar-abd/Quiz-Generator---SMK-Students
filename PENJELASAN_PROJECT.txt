@@ -1,0 +1,1094 @@
+================================================================================
+        PENJELASAN LENGKAP PROJECT: AI QUIZ GENERATOR
+        Quiz Generator untuk Siswa SMK
+================================================================================
+
+================================================================================
+BAGIAN 1: PENJELASAN NON-TEKNIS (UNTUK SEMUA ORANG)
+================================================================================
+
+1.1 APA ITU PROJECT INI?
+-------------------------
+Project ini adalah aplikasi web yang bisa membuat soal ujian/kuis secara 
+otomatis menggunakan kecerdasan buatan (AI). Aplikasi ini dirancang khusus 
+untuk membantu siswa SMK belajar lebih efektif.
+
+Bayangkan seperti ini: Anda punya buku pelajaran atau catatan, lalu Anda 
+upload ke aplikasi ini, kemudian aplikasi akan membaca isinya dan membuat 
+soal-soal latihan secara otomatis. Praktis kan?
+
+
+1.2 SIAPA YANG BISA MENGGUNAKAN?
+---------------------------------
+• Siswa SMK - untuk latihan soal dari materi pelajaran
+• Guru - untuk membuat bank soal dengan cepat
+• Siapa saja yang ingin belajar dengan metode soal latihan
+
+
+1.3 FITUR-FITUR UTAMA
+---------------------
+a) UPLOAD MATERI
+   - Upload file PDF, Word, PowerPoint, atau gambar
+   - Upload bisa dari komputer atau foto dari HP
+   - Sistem akan membaca dan memahami isi materinya
+
+b) GENERATE SOAL OTOMATIS
+   - AI akan membuat soal pilihan ganda dari materi yang diupload
+   - Bisa pilih berapa jumlah soal yang diinginkan
+   - Soal dibuat dengan tingkat kesulitan yang sesuai
+
+c) DASHBOARD & TRACKING
+   - Lihat semua kuis yang pernah dibuat
+   - Pantau progress belajar
+   - Statistik pencapaian
+
+d) SISTEM LATIHAN
+   - Kerjakan soal langsung di aplikasi
+   - Langsung tau jawaban benar/salah
+   - Penjelasan untuk setiap jawaban
+
+e) ADAPTIVE LEARNING (FITUR CANGGIH)
+   - Sistem belajar dari jawaban Anda
+   - Soal berikutnya disesuaikan dengan kemampuan Anda
+   - Kalau banyak salah, soal berikutnya lebih mudah
+   - Kalau banyak benar, soal berikutnya lebih menantang
+
+
+1.4 CARA KERJA SEDERHANA
+-------------------------
+1. DAFTAR/LOGIN
+   → Buat akun atau login pakai akun Google
+
+2. UPLOAD MATERI
+   → Pilih file pelajaran yang mau dijadikan soal
+   → Tunggu sistem memproses (biasanya 30-60 detik)
+
+3. SETTING KUIS
+   → Tentukan jumlah soal
+   → Pilih topik (opsional)
+   → Klik "Generate"
+
+4. MULAI LATIHAN
+   → Kerjakan soal satu per satu
+   → Lihat hasil dan penjelasan
+   → Ulangi sampai paham
+
+5. LIHAT PROGRESS
+   → Cek dashboard untuk lihat perkembangan
+   → Lihat kuis mana yang sudah dikerjakan
+   → Pantau nilai dan statistik
+
+
+1.5 KEUNTUNGAN MENGGUNAKAN APLIKASI INI
+----------------------------------------
+✓ HEMAT WAKTU
+  Tidak perlu membuat soal manual, AI yang membuatkan
+
+✓ BELAJAR LEBIH EFEKTIF
+  Soal disesuaikan dengan kemampuan Anda
+
+✓ PRAKTIS
+  Bisa diakses dari mana saja (HP/komputer)
+
+✓ GRATIS
+  Tidak perlu bayar untuk menggunakan
+
+✓ UNLIMITED
+  Bisa buat soal sebanyak yang diinginkan
+
+✓ INSTANT FEEDBACK
+  Langsung tahu jawaban benar/salah dengan penjelasan
+
+
+================================================================================
+BAGIAN 2: PENJELASAN TEKNIS MENENGAH (UNTUK YANG PAHAM KOMPUTER)
+================================================================================
+
+2.1 TEKNOLOGI YANG DIGUNAKAN
+-----------------------------
+• FRONTEND: Next.js 14 dengan React (framework JavaScript modern)
+• STYLING: Tailwind CSS (desain responsive dan modern)
+• BACKEND: Next.js API Routes (serverless functions)
+• DATABASE: PostgreSQL via Supabase (cloud database)
+• AI: Google Gemini 2.0 Flash (model AI terbaru dari Google)
+• AUTHENTICATION: NextAuth.js dengan Google OAuth
+• ORM: Prisma (database management)
+• DEPLOYMENT: Vercel (hosting otomatis)
+
+
+2.2 ARSITEKTUR APLIKASI
+-----------------------
+Aplikasi ini menggunakan arsitektur Full-Stack Modern:
+
+CLIENT (Browser)
+    ↓
+NEXT.JS APP (Frontend + Backend)
+    ↓
+├─ API ROUTES (Backend Logic)
+│   ├─ /api/generate-quiz → Generate soal dari AI
+│   ├─ /api/quizzes → CRUD kuis
+│   ├─ /api/auth → Authentication
+│   └─ /api/adaptive → Adaptive learning
+│
+├─ EXTERNAL SERVICES
+│   ├─ Google Gemini API → AI untuk generate soal
+│   ├─ Supabase PostgreSQL → Database
+│   └─ Google OAuth → Login dengan Google
+│
+└─ DATABASE (PostgreSQL)
+    ├─ Users
+    ├─ Quizzes
+    ├─ Questions
+    └─ UserAnswers
+
+
+2.3 FLOW DATA SAAT GENERATE QUIZ
+---------------------------------
+1. User upload file di halaman /upload
+2. File divalidasi (tipe, ukuran, format)
+3. File dikirim ke API /api/generate-quiz
+4. API extract text dari file:
+   - PDF → gunakan PDF parser
+   - Word/PPT → gunakan library khusus
+   - Image → gunakan OCR (Optical Character Recognition)
+5. Text dikirim ke Google Gemini API
+6. Gemini menganalisis text dan generate soal dalam format JSON
+7. API validasi response dari Gemini
+8. Soal disimpan ke database PostgreSQL
+9. User redirect ke halaman kuis
+
+
+2.4 DATABASE SCHEMA
+-------------------
+DATABASE: PostgreSQL di Supabase
+Project ID: lbnkxhaozddtaktierqe
+
+TABLES:
+
+User
+├─ id (primary key)
+├─ email
+├─ name
+├─ image
+├─ createdAt
+└─ quizzes (relation)
+
+Quiz
+├─ id (primary key)
+├─ title
+├─ topic
+├─ status (draft/completed)
+├─ userId (foreign key)
+├─ createdAt
+├─ updatedAt
+└─ questions (relation)
+
+Question
+├─ id (primary key)
+├─ quizId (foreign key)
+├─ text
+├─ options (JSON array)
+├─ correctAnswer
+├─ explanation
+├─ difficulty
+└─ order
+
+UserAnswer
+├─ id (primary key)
+├─ userId (foreign key)
+├─ questionId (foreign key)
+├─ selectedAnswer
+├─ isCorrect
+└─ answeredAt
+
+
+2.5 API ENDPOINTS
+-----------------
+Authentication:
+• GET  /api/auth/[...nextauth] → NextAuth handler
+• POST /api/create-user → Create user di database
+• POST /api/setup-user → Setup user pertama kali
+
+Quiz Management:
+• POST /api/generate-quiz → Generate kuis baru dari file
+• GET  /api/quizzes → Ambil semua kuis user
+• GET  /api/quizzes/[id] → Ambil detail kuis
+• PUT  /api/quizzes/[id] → Update kuis
+• DELETE /api/quizzes/[id] → Hapus kuis
+
+Adaptive Learning:
+• POST /api/adaptive/record → Record jawaban user
+• POST /api/adaptive/next → Get soal berikutnya (adaptive)
+
+Utilities:
+• GET /api/dbcheck → Check koneksi database
+• GET /api/test-db → Test database connection
+
+
+2.6 SECURITY & AUTHENTICATION
+------------------------------
+• Session-based auth dengan NextAuth.js
+• JWT tokens untuk maintain session
+• Google OAuth untuk login aman
+• Database credentials di environment variables
+• HTTPS only di production
+• CSRF protection built-in di Next.js
+• SQL injection protection via Prisma ORM
+
+
+================================================================================
+BAGIAN 3: PENJELASAN TEKNIS MENDALAM (UNTUK DEVELOPER)
+================================================================================
+
+3.1 PROJECT STRUCTURE DETAIL
+-----------------------------
+belajar_ai/
+│
+├─ src/
+│  ├─ app/                          # Next.js 14 App Router
+│  │  ├─ layout.tsx                 # Root layout dengan providers
+│  │  ├─ page.tsx                   # Homepage
+│  │  ├─ globals.css                # Global styles (Tailwind)
+│  │  │
+│  │  ├─ api/                       # API Routes (Backend)
+│  │  │  ├─ auth/
+│  │  │  │  └─ [...nextauth]/      # NextAuth handler
+│  │  │  │     └─ route.ts
+│  │  │  ├─ generate-quiz/          # Quiz generation endpoint
+│  │  │  │  └─ route.ts
+│  │  │  ├─ quizzes/                # CRUD endpoints
+│  │  │  │  ├─ route.ts             # GET all, POST new
+│  │  │  │  └─ [id]/
+│  │  │  │     └─ route.ts          # GET, PUT, DELETE by ID
+│  │  │  ├─ adaptive/               # Adaptive learning
+│  │  │  │  ├─ record/route.ts      # Record answers
+│  │  │  │  └─ next/route.ts        # Get next question
+│  │  │  └─ ...
+│  │  │
+│  │  ├─ upload/                    # Upload page
+│  │  │  ├─ page.tsx
+│  │  │  └─ actions.ts              # Server actions
+│  │  │
+│  │  ├─ dashboard/                 # Dashboard page
+│  │  │  └─ page.tsx
+│  │  │
+│  │  ├─ quiz/[id]/                 # Quiz detail & practice
+│  │  │  └─ page.tsx
+│  │  │
+│  │  └─ builder/                   # Quiz builder (future)
+│  │     └─ page.tsx
+│  │
+│  ├─ components/                   # React components
+│  │  ├─ ui/                        # Base UI components
+│  │  │  ├─ Button.tsx
+│  │  │  ├─ Card.tsx
+│  │  │  ├─ Input.tsx
+│  │  │  └─ ...
+│  │  ├─ animations/                # Animation components
+│  │  │  ├─ PageTransition.tsx
+│  │  │  └─ SectionAnimated.tsx
+│  │  ├─ sound/                     # Sound effects
+│  │  │  ├─ GlobalSound.tsx
+│  │  │  └─ useUISound.ts
+│  │  ├─ Navbar.tsx
+│  │  ├─ Footer.tsx
+│  │  ├─ FileUpload.tsx
+│  │  ├─ QuizCard.tsx
+│  │  └─ ...
+│  │
+│  ├─ hooks/                        # Custom React hooks
+│  │  ├─ useQuizStore.tsx           # Zustand store untuk quiz state
+│  │  └─ useStableQuizActions.ts    # Stable quiz actions
+│  │
+│  ├─ lib/                          # Utilities & helpers
+│  │  ├─ prisma.ts                  # Prisma client singleton
+│  │  ├─ auth.ts                    # NextAuth configuration
+│  │  ├─ fileUtils.ts               # File handling utilities
+│  │  ├─ quizSchema.ts              # Zod schemas untuk validation
+│  │  └─ api/
+│  │     └─ quizApi.ts              # API client functions
+│  │
+│  ├─ server/                       # Server-side logic
+│  │  ├─ db.ts                      # Database operations
+│  │  ├─ extract.ts                 # Text extraction dari files
+│  │  ├─ adaptive.ts                # Adaptive algorithm
+│  │  └─ quizMapper.ts              # Data transformation
+│  │
+│  └─ types/                        # TypeScript type definitions
+│     └─ quiz.ts
+│
+├─ prisma/
+│  ├─ schema.prisma                 # Database schema
+│  └─ seed.js                       # Database seeder
+│
+├─ public/                          # Static files
+│  └─ font/                         # Custom fonts (Satoshi)
+│
+├─ .env.local                       # Environment variables (secret)
+├─ next.config.ts                   # Next.js configuration
+├─ tsconfig.json                    # TypeScript configuration
+├─ tailwind.config.ts               # Tailwind CSS configuration
+├─ package.json                     # Dependencies
+└─ README.md                        # Project documentation
+
+
+3.2 CORE TECHNOLOGIES DEEP DIVE
+--------------------------------
+
+A) NEXT.JS 14 APP ROUTER
+-------------------------
+• Menggunakan App Router (bukan Pages Router)
+• Server Components by default untuk performa optimal
+• Client Components untuk interaktivity
+• Built-in API Routes untuk backend logic
+• Automatic code splitting & optimization
+• Image optimization dengan next/image
+• Font optimization dengan next/font
+
+Key Features Used:
+- Server Actions untuk form submissions
+- Route Handlers untuk API endpoints
+- Layouts untuk shared UI
+- Loading & Error states
+- Metadata API untuk SEO
+- Streaming dengan Suspense
+
+
+B) TYPESCRIPT
+--------------
+• Type safety di seluruh codebase
+• Interface definitions di src/types/
+• Strict mode enabled
+• Type inference untuk DX yang lebih baik
+• Generic types untuk reusable components
+
+Example Type Definitions:
+```typescript
+interface Quiz {
+  id: string;
+  title: string;
+  topic: string | null;
+  status: 'draft' | 'completed';
+  userId: string;
+  questions: Question[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Question {
+  id: string;
+  text: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  order: number;
+}
+```
+
+
+C) TAILWIND CSS
+---------------
+• Utility-first CSS framework
+• Custom theme configuration
+• Responsive design dengan mobile-first approach
+• Dark mode ready (black/white theme)
+• Custom components dengan @apply
+• JIT compiler untuk optimal bundle size
+
+Theme Configuration:
+- Primary colors: Black (#000000) & White (#FFFFFF)
+- Accent: Gray shades
+- Custom animations
+- Custom fonts (Satoshi)
+
+
+D) PRISMA ORM
+-------------
+• Type-safe database client
+• Schema-first development
+• Automatic migrations
+• Relation management
+• Connection pooling via PgBouncer
+
+Prisma Client Usage:
+```typescript
+import { prisma } from '@/lib/prisma';
+
+// Create quiz
+const quiz = await prisma.quiz.create({
+  data: {
+    title: 'My Quiz',
+    userId: user.id,
+    questions: {
+      create: [
+        { text: 'Question 1', /* ... */ }
+      ]
+    }
+  },
+  include: { questions: true }
+});
+
+// Query with relations
+const quizzes = await prisma.quiz.findMany({
+  where: { userId: user.id },
+  include: { questions: true },
+  orderBy: { createdAt: 'desc' }
+});
+```
+
+
+E) SUPABASE POSTGRESQL
+----------------------
+• Cloud-hosted PostgreSQL database
+• PgBouncer connection pooling (port 6543)
+• Direct connection for migrations (port 5432)
+• SSL required untuk security
+• Automatic backups
+• Real-time subscriptions (future feature)
+
+Connection Strings:
+- Pooled (app): port 6543 dengan pgbouncer=true
+- Direct (migrations): port 5432
+
+
+F) GOOGLE GEMINI 2.0 FLASH
+---------------------------
+• Latest AI model dari Google
+• Multimodal capabilities (text, image, video)
+• Fast inference time
+• Cost-effective
+• Long context window (up to 1M tokens)
+
+Usage dalam project:
+```typescript
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ 
+  model: 'gemini-2.0-flash-exp' 
+});
+
+const result = await model.generateContent({
+  contents: [{
+    role: 'user',
+    parts: [{ text: prompt }]
+  }]
+});
+```
+
+Prompt Engineering:
+- System prompt untuk set role & rules
+- Few-shot examples untuk consistent output
+- JSON schema untuk structured response
+- Temperature setting untuk creativity control
+
+
+G) NEXTAUTH.JS
+--------------
+• Authentication library untuk Next.js
+• Multiple providers support (Google OAuth)
+• Session management dengan JWT
+• Automatic CSRF protection
+• Database sessions via Prisma adapter
+
+Configuration:
+```typescript
+export const authOptions: NextAuthOptions = {
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  ],
+  adapter: PrismaAdapter(prisma),
+  session: { strategy: 'jwt' },
+  callbacks: {
+    session: async ({ session, token }) => {
+      // Add user ID to session
+    }
+  }
+};
+```
+
+
+3.3 KEY ALGORITHMS & LOGIC
+---------------------------
+
+A) QUIZ GENERATION ALGORITHM
+-----------------------------
+1. File Input Processing
+   • Validate file type & size
+   • Extract text based on file type:
+     - PDF: pdf-parse library
+     - DOCX: mammoth library
+     - Images: OCR dengan Tesseract/Google Vision
+   
+2. Text Preprocessing
+   • Remove special characters
+   • Normalize whitespace
+   • Split into chunks if too long (context window limit)
+   
+3. AI Prompt Construction
+   • System role: "Kamu adalah expert pembuat soal ujian"
+   • Context: Text yang di-extract
+   • Instructions: Format output, difficulty level, jumlah soal
+   • Output schema: JSON structure
+   
+4. API Call to Gemini
+   • Send prompt dengan streaming disabled
+   • Handle rate limiting & retries
+   • Parse JSON response
+   
+5. Response Validation
+   • Zod schema validation
+   • Check required fields
+   • Validate answer options
+   • Ensure correctAnswer exists in options
+   
+6. Database Storage
+   • Transaction untuk atomicity
+   • Create quiz record
+   • Create questions records
+   • Link to user
+
+Example Prompt:
+```
+Kamu adalah expert pembuat soal pilihan ganda untuk siswa SMK.
+
+Materi:
+{extracted_text}
+
+Buatkan {num_questions} soal pilihan ganda dengan kriteria:
+- Tingkat kesulitan: bervariasi (easy, medium, hard)
+- 4 pilihan jawaban (A, B, C, D)
+- Sertakan penjelasan untuk jawaban yang benar
+- Format output: JSON
+
+Output format:
+{
+  "questions": [
+    {
+      "text": "Pertanyaan...",
+      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+      "correctAnswer": "A",
+      "explanation": "Penjelasan...",
+      "difficulty": "medium"
+    }
+  ]
+}
+```
+
+
+B) ADAPTIVE LEARNING ALGORITHM
+-------------------------------
+Purpose: Adjust difficulty based on user performance
+
+Algorithm:
+1. Track user answers (correct/incorrect)
+2. Calculate performance metrics:
+   • Accuracy rate (% correct)
+   • Response time (future)
+   • Streak (consecutive correct)
+3. Determine next question difficulty:
+   • High accuracy (>80%) → increase difficulty
+   • Medium accuracy (50-80%) → same level
+   • Low accuracy (<50%) → decrease difficulty
+4. Select question from pool matching difficulty
+5. Avoid recently asked questions
+
+Implementation:
+```typescript
+function getNextDifficulty(
+  userAnswers: UserAnswer[]
+): 'easy' | 'medium' | 'hard' {
+  const recent = userAnswers.slice(-5); // Last 5 answers
+  const accuracy = recent.filter(a => a.isCorrect).length / recent.length;
+  
+  if (accuracy > 0.8) return 'hard';
+  if (accuracy > 0.5) return 'medium';
+  return 'easy';
+}
+```
+
+
+C) FILE VALIDATION & SECURITY
+------------------------------
+• Client-side validation:
+  - File type checking
+  - Size limit (10MB default)
+  - Extension whitelist
+  
+• Server-side validation:
+  - MIME type verification
+  - Magic number checking
+  - Content scanning (future: virus scan)
+  
+• Rate limiting:
+  - Max uploads per hour
+  - Max quiz generations per day
+  
+• Data sanitization:
+  - HTML escaping
+  - SQL injection prevention (Prisma)
+  - XSS protection
+
+
+3.4 STATE MANAGEMENT
+--------------------
+
+A) ZUSTAND STORE (useQuizStore)
+--------------------------------
+• Lightweight state management
+• TypeScript support
+• Devtools integration
+• Persist middleware untuk localStorage
+
+Store Structure:
+```typescript
+interface QuizState {
+  // Quiz data
+  currentQuiz: Quiz | null;
+  quizzes: Quiz[];
+  
+  // UI state
+  isLoading: boolean;
+  error: string | null;
+  
+  // Actions
+  setCurrentQuiz: (quiz: Quiz) => void;
+  fetchQuizzes: () => Promise<void>;
+  generateQuiz: (file: File) => Promise<Quiz>;
+  deleteQuiz: (id: string) => Promise<void>;
+}
+```
+
+Benefits:
+- No prop drilling
+- Selective re-renders
+- Minimal boilerplate
+- Easy testing
+
+
+B) SERVER STATE (React Query - Future)
+---------------------------------------
+Currently using manual fetch with useState/useEffect
+Planned migration to React Query for:
+- Automatic caching
+- Background refetching
+- Optimistic updates
+- Devtools
+
+
+3.5 PERFORMANCE OPTIMIZATIONS
+------------------------------
+
+A) CODE SPLITTING
+-----------------
+• Automatic route-based splitting
+• Dynamic imports untuk heavy components
+• Lazy loading images dengan next/image
+
+Example:
+```typescript
+const QuizEditor = dynamic(() => import('@/components/QuizEditor'), {
+  loading: () => <LoadingSkeleton />,
+  ssr: false // Client-only component
+});
+```
+
+
+B) CACHING STRATEGY
+-------------------
+• Next.js static generation (SSG) untuk homepage
+• Incremental Static Regeneration (ISR) untuk dashboard
+• API route caching dengan revalidate
+• Database query optimization dengan indexes
+
+Cache Configuration:
+```typescript
+export const revalidate = 60; // Revalidate every 60 seconds
+
+export async function generateStaticParams() {
+  const quizzes = await prisma.quiz.findMany({
+    select: { id: true }
+  });
+  return quizzes.map((quiz) => ({ id: quiz.id }));
+}
+```
+
+
+C) DATABASE OPTIMIZATION
+-------------------------
+• Connection pooling via PgBouncer
+• Query optimization dengan EXPLAIN ANALYZE
+• Indexes pada frequently queried columns:
+  - userId pada Quiz table
+  - quizId pada Question table
+  - userId + questionId pada UserAnswer
+• Batch operations untuk bulk inserts
+• Lazy loading relations (include only when needed)
+
+
+D) IMAGE OPTIMIZATION
+----------------------
+• next/image untuk automatic optimization
+• WebP format dengan fallback
+• Responsive images dengan srcset
+• Lazy loading by default
+• Blur placeholder untuk UX
+
+
+3.6 DEPLOYMENT & CI/CD
+----------------------
+
+A) VERCEL DEPLOYMENT
+--------------------
+• Git-based deployment (push to main → auto deploy)
+• Preview deployments untuk branches
+• Environment variables configuration
+• Custom domain support (neezy.my.id)
+• Automatic HTTPS
+• Edge network (CDN)
+
+Build Configuration:
+- Framework: Next.js
+- Node version: 18.x
+- Build command: npm run build
+- Output directory: .next
+
+
+B) ENVIRONMENT VARIABLES
+-------------------------
+Required environment variables:
+```
+# AI
+GEMINI_API_KEY=xxx
+GEMINI_MODEL=gemini-2.0-flash-exp
+
+# Database
+DATABASE_URL=postgresql://...
+DIRECT_URL=postgresql://...
+
+# Auth
+NEXTAUTH_URL=https://neezy.my.id
+NEXTAUTH_SECRET=xxx
+GOOGLE_CLIENT_ID=xxx
+GOOGLE_CLIENT_SECRET=xxx
+
+# App
+NEXT_PUBLIC_APP_URL=https://neezy.my.id
+```
+
+Security Notes:
+- Never commit .env.local to git
+- Use Vercel environment variables UI
+- Different values untuk dev/staging/prod
+
+
+C) DATABASE MIGRATIONS
+-----------------------
+• Prisma Migrate untuk version control schema
+• Migration history di prisma/migrations/
+• Manual patches di prisma/patches/
+
+Workflow:
+1. Update schema.prisma
+2. Run: npx prisma migrate dev --name description
+3. Review generated SQL
+4. Test locally
+5. Deploy: npx prisma migrate deploy (production)
+
+
+D) MONITORING & ERROR TRACKING
+-------------------------------
+• Sentry integration untuk error tracking
+• Console logging untuk development
+• API response monitoring
+• Database connection health checks
+
+Sentry Configuration:
+- Client-side: sentry.client.config.ts
+- Server-side: sentry.server.config.ts
+- Edge: sentry.edge.config.ts
+
+
+3.7 TESTING STRATEGY
+--------------------
+
+A) UNIT TESTS (Future Implementation)
+--------------------------------------
+• Jest + React Testing Library
+• Component testing
+• Utility function testing
+• API route testing
+
+Example:
+```typescript
+describe('QuizCard', () => {
+  it('renders quiz title', () => {
+    const quiz = { title: 'Test Quiz', /* ... */ };
+    render(<QuizCard quiz={quiz} />);
+    expect(screen.getByText('Test Quiz')).toBeInTheDocument();
+  });
+});
+```
+
+
+B) INTEGRATION TESTS (Future)
+------------------------------
+• Playwright untuk E2E testing
+• User flow testing
+• API integration testing
+
+
+C) MANUAL TESTING CHECKLIST
+----------------------------
+✓ Authentication flow
+✓ File upload validation
+✓ Quiz generation with various file types
+✓ Quiz practice flow
+✓ Adaptive learning behavior
+✓ Dashboard data accuracy
+✓ Mobile responsiveness
+✓ Cross-browser compatibility
+
+
+3.8 COMMON ISSUES & SOLUTIONS
+------------------------------
+
+A) HYDRATION ERRORS
+-------------------
+Issue: React hydration mismatch
+Solution: Use ClientOnly wrapper untuk client-only components
+```typescript
+<ClientOnly>
+  <ComponentWithDateOrWindow />
+</ClientOnly>
+```
+
+
+B) DATABASE CONNECTION ISSUES
+------------------------------
+Issue: Too many connections atau connection timeout
+Solution: 
+- Use PgBouncer pooled connection (port 6543)
+- Prisma singleton pattern
+- Close connections properly
+
+
+C) API RATE LIMITING
+---------------------
+Issue: Gemini API rate limit exceeded
+Solution:
+- Implement retry logic dengan exponential backoff
+- Queue system untuk batch processing
+- Cache frequent requests
+
+
+D) FILE UPLOAD LIMITS
+----------------------
+Issue: Large files fail to upload
+Solution:
+- Implement chunked upload
+- Server-side validation
+- Progress indicator
+
+
+3.9 FUTURE ENHANCEMENTS
+-----------------------
+
+A) PLANNED FEATURES
+-------------------
+1. Real-time Quiz Sessions
+   - Multiple users simultaneously
+   - Leaderboard
+   - Live results
+
+2. Quiz Builder
+   - Manual quiz creation
+   - Question bank
+   - Template system
+
+3. Advanced Analytics
+   - Performance graphs
+   - Learning insights
+   - Prediction algorithms
+
+4. Social Features
+   - Share quizzes
+   - Friend system
+   - Achievements
+
+5. Mobile App
+   - React Native
+   - Offline support
+   - Push notifications
+
+
+B) TECHNICAL IMPROVEMENTS
+--------------------------
+• Migrate to React Query untuk state management
+• Implement Redis caching
+• Add full-text search dengan PostgreSQL
+• Real-time updates via WebSockets
+• Progressive Web App (PWA)
+• Internationalization (i18n)
+
+
+3.10 DEVELOPMENT WORKFLOW
+--------------------------
+
+A) LOCAL DEVELOPMENT
+--------------------
+1. Clone repository
+   ```bash
+   git clone https://github.com/neezar-abd/Quiz-Generator---SMK-Students.git
+   cd belajar_ai
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+
+3. Setup environment variables
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local dengan credentials
+   ```
+
+4. Setup database
+   ```bash
+   npx prisma migrate dev
+   npx prisma db seed
+   ```
+
+5. Start development server
+   ```bash
+   npm run dev
+   ```
+
+6. Open http://localhost:3000
+
+
+B) GIT WORKFLOW
+---------------
+• Main branch: production code
+• Feature branches: feature/nama-fitur
+• Commit convention: Conventional Commits
+  - feat: New feature
+  - fix: Bug fix
+  - docs: Documentation
+  - refactor: Code refactoring
+  - test: Testing
+
+Example:
+```bash
+git checkout -b feature/quiz-timer
+# Make changes
+git add .
+git commit -m "feat: add quiz timer functionality"
+git push origin feature/quiz-timer
+# Create pull request
+```
+
+
+C) CODE REVIEW CHECKLIST
+-------------------------
+✓ TypeScript types properly defined
+✓ No console.errors atau console.warns
+✓ Proper error handling
+✓ Code follows project conventions
+✓ Comments untuk complex logic
+✓ No hardcoded values
+✓ Responsive design tested
+✓ Accessibility considerations
+
+
+================================================================================
+BAGIAN 4: TROUBLESHOOTING & FAQ
+================================================================================
+
+4.1 COMMON PROBLEMS
+-------------------
+
+Q: Quiz generation fails dengan "AI service unavailable"
+A: Check GEMINI_API_KEY di .env.local, pastikan valid dan belum expired
+
+Q: Database connection error
+A: Periksa DATABASE_URL, pastikan Supabase project aktif
+
+Q: Login dengan Google tidak berfungsi
+A: Verify GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET, pastikan 
+   authorized redirect URI di Google Console sudah benar
+
+Q: File upload gagal
+A: Check file size (<10MB) dan format (PDF, DOCX, PPT, Image)
+
+Q: Hydration error di console
+A: Clear browser cache, restart dev server
+
+
+4.2 DEBUGGING TIPS
+------------------
+• Check console logs (F12 → Console)
+• Check network tab untuk API errors
+• Check Vercel logs untuk production errors
+• Check Supabase logs untuk database issues
+• Use React DevTools untuk component debugging
+• Use Prisma Studio untuk database debugging: npx prisma studio
+
+
+4.3 PERFORMANCE TIPS
+--------------------
+• Clear .next folder bila build error: 
+  Remove-Item -Recurse -Force .next; npm run build
+• Optimize images sebelum upload
+• Use Chrome DevTools Lighthouse untuk audit
+• Monitor bundle size: npm run build (check output)
+
+
+================================================================================
+BAGIAN 5: KONTRIBUTOR & CREDITS
+================================================================================
+
+5.1 DEVELOPER
+-------------
+• Neezar Abd
+• GitHub: @neezar-abd
+• Project Repository: Quiz-Generator---SMK-Students
+
+
+5.2 TECHNOLOGIES USED
+---------------------
+• Next.js - https://nextjs.org
+• React - https://react.dev
+• TypeScript - https://www.typescriptlang.org
+• Tailwind CSS - https://tailwindcss.com
+• Prisma - https://www.prisma.io
+• Supabase - https://supabase.com
+• Google Gemini - https://ai.google.dev
+• NextAuth.js - https://next-auth.js.org
+• Vercel - https://vercel.com
+
+
+5.3 LICENSE
+-----------
+[Specify license, e.g., MIT License]
+
+
+================================================================================
+KONTAK & SUPPORT
+================================================================================
+
+Untuk pertanyaan, bug reports, atau feature requests:
+• GitHub Issues: [repository URL]/issues
+• Email: [your email]
+• Documentation: README.md
+
+
+================================================================================
+LAST UPDATED: November 4, 2025
+VERSION: 1.0.0
+================================================================================
