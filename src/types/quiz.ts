@@ -32,7 +32,7 @@ import type {
 // Additional types for application state management
 export type QuizFormOptions = {
   topic: string;
-  level: "X" | "XI" | "XII" | "General";
+  level: "X" | "XI" | "XII" | "Very Hard" | "General";
   mcqCount: number;
   essayCount: number;
 };
@@ -48,7 +48,7 @@ export type QuizStoreActions = {
   generateQuiz: (request: GenerateQuizRequest) => Promise<QuizPayload>;
   generateQuizFromFile: (file: File, options: {
     topic: string;
-    level: 'X' | 'XI' | 'XII' | 'General';
+    level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General';
     mcqCount: number;
     essayCount: number;
   }) => Promise<QuizPayload>;
@@ -60,7 +60,7 @@ export type QuizStoreActions = {
   clearError: () => void;
   setLoading: (loading: boolean) => void;
   setCurrentQuiz: (quiz: QuizPayload | null) => void;
-  getQuizzesByLevel: (level: 'X' | 'XI' | 'XII' | 'General') => QuizPayload[];
+  getQuizzesByLevel: (level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General') => QuizPayload[];
   getRecentQuizzes: (limit?: number) => QuizPayload[];
 };
 
@@ -81,7 +81,7 @@ export type LegacyEssay = {
 
 export type LegacyQuizMetadata = {
   topic: string;
-  level: "X" | "XI" | "XII" | "General";
+  level: "X" | "XI" | "XII" | "Very Hard" | "General";
   createdAt: string;
   updatedAt?: string;
   author?: string;

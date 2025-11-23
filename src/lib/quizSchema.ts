@@ -30,8 +30,8 @@ export const EssaySchema = z.object({
  */
 export const QuizMetadataSchema = z.object({
   topic: z.string().min(1, "Topic cannot be empty"),
-  level: z.enum(["X", "XI", "XII", "General"], {
-    message: "Level must be X, XI, XII, or General"
+  level: z.enum(["X", "XI", "XII", "Very Hard", "General"], {
+    message: "Level must be X, XI, XII, Very Hard, or General"
   }),
   createdAt: z.string().datetime("Invalid datetime format"),
   updatedAt: z.string().datetime("Invalid datetime format").optional(),
@@ -49,7 +49,7 @@ export const QuizPayloadSchema = z.object({
   metadata: QuizMetadataSchema,
   multipleChoice: z.array(MCQSchema)
     .min(1, "Quiz must have at least 1 MCQ")
-    .max(50, "Quiz cannot have more than 50 MCQs"),
+    .max(40, "Quiz cannot have more than 40 MCQs"),
   essay: z.array(EssaySchema)
     .min(0, "Essay count cannot be negative")
     .max(10, "Quiz cannot have more than 10 essays")
@@ -68,11 +68,11 @@ export const QuizCreateSchema = QuizPayloadSchema.omit({ id: true }).passthrough
 export const GenerateQuizRequestSchema = z.object({
   text: z.string().min(10, "Text content must be at least 10 characters"),
   topic: z.string().min(1, "Topic cannot be empty"),
-  level: z.enum(["X", "XI", "XII", "General"]),
+  level: z.enum(["X", "XI", "XII", "Very Hard", "General"]),
   mcqCount: z.number()
     .int("MCQ count must be an integer")
     .min(1, "Must generate at least 1 MCQ")
-    .max(50, "Cannot generate more than 50 MCQs"),
+    .max(40, "Cannot generate more than 40 MCQs"),
   essayCount: z.number()
     .int("Essay count must be an integer")
     .min(0, "Essay count cannot be negative")
@@ -197,7 +197,7 @@ export function ensurePartialQuizPayload(json: unknown): PartialQuizPayload {
 // Utility schemas for common validations
 export const QuizIdSchema = z.string().min(1, "Quiz ID cannot be empty");
 export const TopicSchema = z.string().min(1, "Topic cannot be empty").max(100, "Topic too long");
-export const LevelSchema = z.enum(["X", "XI", "XII", "General"]);
+export const LevelSchema = z.enum(["X", "XI", "XII", "Very Hard", "General"]);
 
 // Export validation helpers
 export const validateQuizId = (id: unknown) => QuizIdSchema.parse(id);

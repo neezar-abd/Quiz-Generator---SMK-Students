@@ -149,10 +149,11 @@ async function generateQuizFromText(
   const { questionCount, difficulty, includeEssay, topic } = options;
   
   // Map difficulty to valid quiz levels
-  const levelMapping: { [key: string]: 'X' | 'XI' | 'XII' | 'General' } = {
+  const levelMapping: { [key: string]: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General' } = {
     'easy': 'X',
     'medium': 'XI', 
     'hard': 'XII',
+    'very hard': 'Very Hard',
     'beginner': 'X',
     'intermediate': 'XI',
     'advanced': 'XII'

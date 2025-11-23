@@ -80,7 +80,7 @@ function sanitizeQuizForApi(quiz: QuizPayload): QuizPayload {
   }));
   return {
     id: quiz.id,
-    metadata: { ...quiz.metadata, level: normalizedLevel as 'X' | 'XI' | 'XII' | 'General', status: normalizedStatus },
+    metadata: { ...quiz.metadata, level: normalizedLevel as 'X' | 'XI' | 'XII' | 'Very Hard' | 'General', status: normalizedStatus },
     multipleChoice: mcqs,
     essay: essays,
   };
@@ -94,7 +94,7 @@ const QuizContext = createContext<{
     generateQuiz: (request: GenerateQuizRequest) => Promise<QuizPayload>;
     generateQuizFromFile: (file: File, options: {
       topic: string;
-      level: 'X' | 'XI' | 'XII' | 'General';
+      level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General';
       mcqCount: number;
       essayCount: number;
     }) => Promise<QuizPayload>;
@@ -106,7 +106,7 @@ const QuizContext = createContext<{
     clearError: () => void;
     setLoading: (loading: boolean) => void;
     setCurrentQuiz: (quiz: QuizPayload | null) => void;
-    getQuizzesByLevel: (level: 'X' | 'XI' | 'XII' | 'General') => QuizPayload[];
+    getQuizzesByLevel: (level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General') => QuizPayload[];
     getRecentQuizzes: (limit?: number) => QuizPayload[];
   };
 } | null>(null);
@@ -173,7 +173,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
   // New method for file upload quiz generation
   const generateQuizFromFile = useCallback(async (file: File, options: {
     topic: string;
-    level: 'X' | 'XI' | 'XII' | 'General';
+    level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General';
     mcqCount: number;
     essayCount: number;
   }): Promise<QuizPayload> => {
@@ -387,7 +387,7 @@ export function QuizProvider({ children }: QuizProviderProps) {
       dispatch({ type: 'SET_CURRENT_QUIZ', payload: quiz });
     },
     // Method to get all quizzes by level
-    getQuizzesByLevel: (level: 'X' | 'XI' | 'XII' | 'General') => {
+    getQuizzesByLevel: (level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General') => {
       return state.quizzes.filter(quiz => quiz.metadata.level === level);
     },
     // Method to get recent quizzes
@@ -415,11 +415,12 @@ export function useQuizStore() {
 }
 
 // Helper function to convert level to difficulty
-function getDifficultyFromLevel(level: 'X' | 'XI' | 'XII' | 'General'): string {
+function getDifficultyFromLevel(level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General'): string {
   switch (level) {
     case 'X': return 'easy';
     case 'XI': return 'medium';
     case 'XII': return 'hard';
+    case 'Very Hard': return 'very hard';
     case 'General': return 'medium';
     default: return 'medium';
   }

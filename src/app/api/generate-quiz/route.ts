@@ -11,11 +11,11 @@ const GenerateQuizApiRequestSchema = z.object({
   topic: z.string()
     .min(1, "Topic cannot be empty")
     .max(100, "Topic too long (max 100 characters)"),
-  level: z.enum(["X", "XI", "XII", "General"]),
+  level: z.enum(["X", "XI", "XII", "Very Hard", "General"]),
   mcqCount: z.number()
     .int("MCQ count must be an integer")
     .min(1, "Must generate at least 1 MCQ")
-    .max(20, "Cannot generate more than 20 MCQs per request"),
+    .max(40, "Cannot generate more than 40 MCQs per request"),
   essayCount: z.number()
     .int("Essay count must be an integer")
     .min(0, "Essay count cannot be negative")

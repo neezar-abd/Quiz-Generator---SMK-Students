@@ -19,7 +19,7 @@ export default function Upload() {
   const [textContent, setTextContent] = useState('');
   const [formData, setFormData] = useState({
     topic: '',
-    level: 'XI' as 'X' | 'XI' | 'XII' | 'General',
+    level: 'XI' as 'X' | 'XI' | 'XII' | 'Very Hard' | 'General',
     mcqCount: 8,
     essayCount: 2
   });
@@ -31,6 +31,7 @@ export default function Upload() {
     { value: 'X', label: 'Class X' },
     { value: 'XI', label: 'Class XI' },
     { value: 'XII', label: 'Class XII' },
+    { value: 'Very Hard', label: 'Very Hard' },
     { value: 'General', label: 'General' }
   ];
 
@@ -227,7 +228,7 @@ export default function Upload() {
                   <select
                     className="w-full p-3 border border-black/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30"
                     value={formData.level}
-                    onChange={(e) => setFormData(prev => ({ ...prev, level: e.target.value as 'X' | 'XI' | 'XII' | 'General' }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, level: e.target.value as 'X' | 'XI' | 'XII' | 'Very Hard' | 'General' }))}
                   >
                     {levelOptions.map(option => (
                       <option key={option.value} value={option.value}>
@@ -242,7 +243,7 @@ export default function Upload() {
                   <input
                     type="number"
                     min="1"
-                    max="20"
+                    max="40"
                     className="w-full p-3 border border-black/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/30"
                     value={formData.mcqCount}
                     onChange={(e) => setFormData(prev => ({ ...prev, mcqCount: parseInt(e.target.value) || 1 }))}

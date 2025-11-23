@@ -136,6 +136,7 @@ enum QuizLevel {
   X
   XI
   XII
+  VERY_HARD
   GENERAL
 }
 

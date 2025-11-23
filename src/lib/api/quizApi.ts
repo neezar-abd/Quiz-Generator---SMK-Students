@@ -24,7 +24,7 @@ export interface QuizResponse {
 export interface QuizListParams {
   page?: number;
   limit?: number;
-  level?: 'X' | 'XI' | 'XII' | 'General';
+  level?: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General';
   status?: 'draft' | 'published' | 'archived';
   search?: string;
 }
@@ -154,7 +154,7 @@ export const getRecentQuizzes = async (): Promise<QuizPayload[]> => {
 };
 
 // Get quizzes by level
-export const getQuizzesByLevel = async (level: 'X' | 'XI' | 'XII' | 'General'): Promise<QuizPayload[]> => {
+export const getQuizzesByLevel = async (level: 'X' | 'XI' | 'XII' | 'Very Hard' | 'General'): Promise<QuizPayload[]> => {
   const result = await QuizApiClient.getQuizzes({ level });
   return result.success ? result.data : [];
 };

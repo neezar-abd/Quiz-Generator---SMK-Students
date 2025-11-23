@@ -15,7 +15,7 @@ export interface CreateQuizData {
   title: string;
   description?: string;
   topic: string;
-  level: 'X' | 'XI' | 'XII' | 'GENERAL';
+  level: 'X' | 'XI' | 'XII' | 'VERY_HARD' | 'GENERAL';
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   userId: string;
   // Persisted raw quiz content for auditing/search (required JSON column in DB)
@@ -48,7 +48,9 @@ export function mapQuizPayloadToDatabase(
     title: quizPayload.metadata.topic, // Use topic as title
     description: quizPayload.metadata.description,
     topic: quizPayload.metadata.topic,
-    level: quizPayload.metadata.level === 'General' ? 'GENERAL' : quizPayload.metadata.level,
+    level: quizPayload.metadata.level === 'General' ? 'GENERAL' : 
+           quizPayload.metadata.level === 'Very Hard' ? 'VERY_HARD' : 
+           quizPayload.metadata.level,
     status: mapStatus(quizPayload.metadata.status),
     userId,
     // Store full payload as JSON to satisfy required `content` field
@@ -95,8 +97,10 @@ export async function mapDatabaseToQuizPayload(quizId: string): Promise<QuizPayl
     id: quiz.id,
     metadata: {
       topic: quiz.topic,
-      // Normalize DB value 'GENERAL' -> 'General' for payload consistency
-      level: (quiz.level === 'GENERAL' ? 'General' : quiz.level) as 'X' | 'XI' | 'XII' | 'General',
+      // Normalize DB value 'GENERAL' -> 'General', 'VERY_HARD' -> 'Very Hard' for payload consistency
+      level: (quiz.level === 'GENERAL' ? 'General' : 
+              quiz.level === 'VERY_HARD' ? 'Very Hard' : 
+              quiz.level) as 'X' | 'XI' | 'XII' | 'Very Hard' | 'General',
       createdAt: quiz.createdAt.toISOString(),
       updatedAt: quiz.updatedAt.toISOString(),
       description: quiz.description || undefined,

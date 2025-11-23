@@ -26,6 +26,7 @@ function BuilderContent() {
     { value: 'X', label: 'Class X' },
     { value: 'XI', label: 'Class XI' },
     { value: 'XII', label: 'Class XII' },
+    { value: 'Very Hard', label: 'Very Hard' },
     { value: 'General', label: 'General' }
   ];
 

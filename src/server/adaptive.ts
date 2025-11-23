@@ -35,6 +35,8 @@ export function difficultyFromQuizLevel(level?: string) {
     case 'XII': return 1350;
     case 'XI': return 1250;
     case 'X': return 1150;
+    case 'VERY HARD': return 1500;
+    case 'VERY_HARD': return 1500;
     default: return 1200;
   }
 }
