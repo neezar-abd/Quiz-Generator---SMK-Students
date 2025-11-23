@@ -19,8 +19,14 @@ const GenerateQuizApiRequestSchema = z.object({
   essayCount: z.number()
     .int("Essay count must be an integer")
     .min(0, "Essay count cannot be negative")
-    .max(5, "Cannot generate more than 5 essays per request")
-}).strict();
+    .max(10, "Cannot generate more than 10 essays per request")
+}).strict().refine(
+  (data) => data.mcqCount + data.essayCount <= 45,
+  {
+    message: "Total questions (MCQ + Essay) cannot exceed 45",
+    path: ["mcqCount"]
+  }
+);
 
 // Initialize Gemini AI (will be null if no API key)
 const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
@@ -191,6 +197,9 @@ export async function POST(request: NextRequest) {
           `${issue.path.join('.')}: ${issue.message}`
         ).join('; ');
         
+        console.error('Quiz request validation failed:', errorMessages);
+        console.error('Request body:', JSON.stringify(body, null, 2));
+        
         return NextResponse.json(
           { error: `Validation failed: ${errorMessages}` },
           { status: 400 }
@@ -204,7 +213,7 @@ export async function POST(request: NextRequest) {
     }
     
     // 4. Generate quiz (with Gemini AI or mock)
-    console.log(`Generating quiz: ${validatedRequest.topic} (${validatedRequest.level}) - ${validatedRequest.mcqCount} MCQ + ${validatedRequest.essayCount} Essay`);
+    console.log(`Generating quiz: ${validatedRequest.topic} (${validatedRequest.level}) - ${validatedRequest.mcqCount} MCQ + ${validatedRequest.essayCount} Essay (Total: ${validatedRequest.mcqCount + validatedRequest.essayCount})`);
     
     let parsedResponse: unknown;
     
